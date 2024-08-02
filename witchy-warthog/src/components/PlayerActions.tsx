@@ -7,7 +7,8 @@ const PlayerActions: React.FC = () => {
 
   return (
     <div>
-      <button onClick={() => takeTurn('player1', 'action1')}>Action 1</button>
+      <button onClick={() => takeTurn('player1', 'gainResources')}>Gain Resources</button>
+      <button onClick={() => takeTurn('player1', 'castSpell')}>Cast Spell</button>
       {/* Other actions */}
     </div>
   );

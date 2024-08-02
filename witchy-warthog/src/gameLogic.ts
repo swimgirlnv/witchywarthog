@@ -1,25 +1,32 @@
 // src/gameLogic.ts
-import { doc, setDoc, onSnapshot } from "firebase/firestore";
-import { db } from './firebaseConfig';
 import { useGameState } from './contexts/GameStateContext';
 
 export const useGameLogic = () => {
   const { gameState, setGameState } = useGameState();
 
-  const startGame = async () => {
-    // Initialize game state in Firestore
-    await setDoc(doc(db, "games", "gameId"), { gameState });
-  };
+  const takeTurn = (playerId: string, action: string) => {
+    // Implement the logic for a player taking a turn
+    // Example: Update resources, cast a spell, etc.
 
-  const listenForChanges = () => {
-    onSnapshot(doc(db, "games", "gameId"), (doc) => {
-      setGameState(doc.data()?.gameState);
+    // Find the player
+    const player = gameState.players.find(p => p.id === playerId);
+    if (!player) return;
+
+    // Example action: gain resources
+    if (action === 'gainResources') {
+      player.resources.gold += 10;
+      player.resources.crystals += 5;
+      player.resources.essence += 2;
+    }
+
+    // Update the game state
+    setGameState({
+      ...gameState,
+      players: gameState.players.map(p =>
+        p.id === playerId ? player : p
+      ),
     });
   };
 
-  return {
-    startGame,
-    listenForChanges,
-    // other game actions
-  };
+  return { takeTurn };
 };
