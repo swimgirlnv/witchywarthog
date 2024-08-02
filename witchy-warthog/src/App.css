@@ -5,20 +5,6 @@
   text-align: center;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 /* App.css */
 .game-board {
   display: flex;
@@ -26,7 +12,7 @@
   align-items: center;
 }
 
-.resource-tracks, .card-areas {
+.resource-tracks, .card-areas, .player-resources {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -60,3 +46,145 @@
   margin: 10px;
   width: 150px;
 }
+
+.player-area {
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 20px;
+}
+
+.player-cards {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.player-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.player-actions .resource-cards,
+.player-actions .convert-resources,
+.player-actions .wizards-on-offer {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0;
+}
+
+.player-actions button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.player-actions button.selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.player-actions input {
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  width: 100px;
+  text-align: center;
+}
+
+/* Resource Card Styles */
+.resource-card {
+  border: 1px solid #999;
+  border-radius: 8px;
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+}
+
+.resource-card.selected {
+  border-color: #4caf50;
+  background-color: #e0ffe0;
+}
+
+.gather-section, .increase-section {
+  margin-bottom: 10px;
+}
+
+.gather-section h3, .increase-section h3 {
+  margin: 0;
+  background-color: #d9534f;
+  color: white;
+  padding: 5px;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.increase-section h3 {
+  background-color: #0275d8;
+}
+
+.resources {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px 0;
+}
+
+.resource {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.resource img {
+  width: 30px;
+  height: 30px;
+}
+
+.resource span {
+  margin-top: 5px;
+  font-size: 14px;
+}
+
+.resource.selected {
+  border: 2px solid #4caf50;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+/* Wizard Card Styles */
+.wizard-card {
+  border: 1px solid #999;
+  border-radius: 8px;
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+  align-items: center;
+}
+
+.wizard-card .wizard-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.wizard-card .wizard-details {
+  text-align: center;
+}
+
+.wizard-card .wizard-details h3 {
+  margin: 10px 0 5px;
+}
+
+.wizard-card .wizard-details p {
+  margin: 5px 0;
+}
+
