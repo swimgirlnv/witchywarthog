@@ -105,18 +105,63 @@ export const useGameLogic = () => {
     });
   };
 
-  const researchSpell = (playerId: string) => {
+  const researchSpell = (playerId: string, spellId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
-    const newSpell = { id: `spell${player.spells.length + 1}`, name: 'New Spell', description: 'A powerful spell', cost: { mandrake: 1, nightshade: 1, foxglove: 0, toadstool: 0, horn: 0, gold: 0, mana: 0 }, isCast: false };
-    player.spells.push(newSpell);
+    const spell = gameState.spellsOnOffer.find(s => s.id === spellId);
+    if (!spell) return;
+
+    if (player.resources.mana < spell.cost) {
+      alert(`You do not have enough mana to research ${spell.name}.`);
+      return;
+    }
+
+    player.resources.mana -= spell.cost;
+    player.spells.push({ ...spell, isCast: false });
+
+    // Remove spell from the offer and replenish from the deck
+    gameState.spellsOnOffer = gameState.spellsOnOffer.filter(s => s.id !== spellId);
+    if (gameState.spellDeck.length > 0) {
+      const newSpell = gameState.spellDeck.pop();
+      if (newSpell) {
+        gameState.spellsOnOffer.push(newSpell);
+      }
+    }
+
+    setGameState({
+      ...gameState,
+      players: gameState.players.map(p => (p.id === playerId ? player : p)),
+      spellsOnOffer: [...gameState.spellsOnOffer],
+    });
+
+    // Optional: Try to cast the researched spell if resources allow
+    castSpell(playerId, spellId);
+  };
+
+  const castSpell = (playerId: string, spellId: string) => {
+    const player = gameState.players.find(p => p.id === playerId);
+    if (!player) return;
+
+    const spell = player.spells.find(s => s.id === spellId);
+    if (!spell || spell.isCast) return;
+
+    const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+    if (canCast) {
+      Object.keys(spell.cost).forEach(resource => {
+        player.resources[resource] -= spell.cost[resource];
+      });
+      spell.isCast = true;
+    } else {
+      alert(`You do not have the necessary resources to cast ${spell.name}.`);
+    }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
     });
   };
+
 
   const createTower = (playerId: string) => {
     const player = gameState.players.find(p => p.id === playerId);

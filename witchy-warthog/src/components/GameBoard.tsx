@@ -2,9 +2,34 @@ import React from 'react';
 import { useGameState } from '../contexts/GameStateContext';
 import ResourceTrack from './ResourceTrack';
 import CardArea from './CardArea';
+import WizardDeck from './WizardDeck';
+import WizardCard from './WizardCard';
+import TowerDeck from './TowerDeck';
+import FamiliarDeck from './FamiliarDeck';
+import SpellDeck from './SpellDeck';
 
 const GameBoard: React.FC = () => {
   const { gameState } = useGameState();
+
+  const handleSelectWizard = (wizardId: string) => {
+    // Handle wizard selection logic here if needed
+    console.log(`Wizard selected: ${wizardId}`);
+  };
+
+  const handleSelectTower = (towerId: string) => {
+    // Handle tower selection logic here if needed
+    console.log(`Tower selected: ${towerId}`);
+  };
+
+  const handleSelectFamiliar = (familiarId: string) => {
+    // Handle familiar selection logic here if needed
+    console.log(`Familiar selected: ${familiarId}`);
+  };
+
+  const handleSelectSpell = (spellId: string) => {
+    // Handle spell selection logic here if needed
+    console.log(`Spell selected: ${spellId}`);
+  };
 
   return (
     <div className="game-board">
@@ -14,6 +39,24 @@ const GameBoard: React.FC = () => {
         <ResourceTrack resource="Foxglove" amount={gameState.resources.foxglove} iconUrl="https://i.imgur.com/Wm2Qha4.png" />
         <ResourceTrack resource="Toadstool" amount={gameState.resources.toadstool} iconUrl="https://i.imgur.com/eQyoGQP.png" />
         <ResourceTrack resource="Horn" amount={gameState.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
+      </div>
+      <div className="card-areas">
+        <div className="tower-deck">
+          <h2>Towers on Offer</h2>
+          <TowerDeck towers={gameState.towersOnOffer} onSelectTower={handleSelectTower} />
+        </div>
+        <div className="wizard-deck">
+          <h2>Wizards on Offer</h2>
+          <WizardDeck wizards={gameState.wizardsOnOffer} onSelectWizard={handleSelectWizard} />
+        </div>
+        <div className="familiar-deck">
+          <h2>Familiars on Offer</h2>
+          <FamiliarDeck familiars={gameState.familiarsOnOffer} onSelectFamiliar={handleSelectFamiliar}/>
+        </div>
+        <div className="spell-deck">
+          <h2>Spells on Offer</h2>
+          <SpellDeck spells={gameState.spellsOnOffer} onSelectSpell={handleSelectSpell}/>
+        </div>
       </div>
       <div className="player-resources">
         {gameState.players.map(player => (
@@ -37,12 +80,6 @@ const GameBoard: React.FC = () => {
             </div>
           </div>
         ))}
-      </div>
-      <div className="card-areas">
-        <CardArea title="Build Tower" cards={gameState.towers} />
-        <CardArea title="Recruit Wizard" cards={gameState.wizards} />
-        <CardArea title="Summon Familiar" cards={gameState.familiars} />
-        <CardArea title="Research Spells" cards={gameState.spells} />
       </div>
     </div>
   );

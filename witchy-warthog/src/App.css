@@ -11,8 +11,13 @@
   flex-direction: column;
   align-items: center;
 }
+.card-areas {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
 
-.resource-tracks, .card-areas, .player-resources {
+.resource-tracks, .player-resources {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -188,3 +193,122 @@
   margin: 5px 0;
 }
 
+.wizard-deck {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Tower Card Styles */
+.tower-card {
+  border: 1px solid #999;
+  border-radius: 8px;
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+  align-items: center;
+}
+
+.tower-card .tower-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.tower-card .wizard-details {
+  text-align: center;
+}
+
+.tower-card .wizard-details h3 {
+  margin: 10px 0 5px;
+}
+
+.tower-card .wizard-details p {
+  margin: 5px 0;
+}
+
+.tower-deck {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Familiar Card Styles */
+.familiar-card {
+  border: 1px solid #999;
+  border-radius: 8px;
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+  align-items: center;
+}
+
+.familiar-card .familiar-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.familiar-card .familiar-details {
+  text-align: center;
+}
+
+.familiar-card .familiar-details h3 {
+  margin: 10px 0 5px;
+}
+
+.familiar-card .familiar-details p {
+  margin: 5px 0;
+}
+
+.familiar-deck {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Spell Card Styles */
+.spell-card {
+  border: 1px solid #999;
+  border-radius: 8px;
+  width: 200px;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f0f0f0;
+  align-items: center;
+}
+
+.spell-card .spell-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.spell-card .spell-details {
+  text-align: center;
+}
+
+.spell-card .spell-details h3 {
+  margin: 10px 0 5px;
+}
+
+.spell-card .spell-details p {
+  margin: 5px 0;
+}
+
+.spell-deck {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
