@@ -1,19 +1,12 @@
 import React from 'react';
 import WizardCard from './WizardCard';
 import { Wizard } from '../contexts/GameStateContext';
+import FaceDownCard from './FaceDownCard';
 
 interface WizardDeckProps {
   wizards: Wizard[];
   onSelectWizard: (id: string) => void;
 }
-
-const faceDownCard: Wizard = {
-  id: 'wizard0',
-  name: '',
-  description: '',
-  power: '',
-  image: 'https://i.imgur.com/178eULE.png'
-};
 
 const WizardDeck: React.FC<WizardDeckProps> = ({ wizards, onSelectWizard }) => {
   // Ensure there are at least 2 wizards to display after the face-down card
@@ -21,7 +14,7 @@ const WizardDeck: React.FC<WizardDeckProps> = ({ wizards, onSelectWizard }) => {
 
   return (
     <div className="wizard-deck">
-      <WizardCard key={faceDownCard.id} wizard={faceDownCard} onSelect={() => null} />
+      <FaceDownCard imageUrl='https://i.imgur.com/178eULE.png' />
       {visibleWizards.map((wizard) => (
         <WizardCard key={wizard.id} wizard={wizard} onSelect={() => onSelectWizard(wizard.id)} />
       ))}

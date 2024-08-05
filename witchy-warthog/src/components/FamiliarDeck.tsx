@@ -1,20 +1,12 @@
 import React from 'react';
 import FamiliarCard from './FamiliarCard';
 import { Familiar } from '../contexts/GameStateContext';
+import FaceDownCard from './FaceDownCard';
 
 interface FamiliarDeckProps {
   familiars: Familiar[];
   onSelectFamiliar: (id: string) => void;
 }
-
-const faceDownCard: Familiar = {
-  id: 'familiar0',
-  name: '',
-  description: '',
-  power: '',
-  cost: '0',
-  image: 'https://i.imgur.com/DBC79as.png'
-};
 
 const FamiliarDeck: React.FC<FamiliarDeckProps> = ({ familiars, onSelectFamiliar }) => {
   // Ensure there are at least 2 familiars to display after the face-down card
@@ -22,7 +14,7 @@ const FamiliarDeck: React.FC<FamiliarDeckProps> = ({ familiars, onSelectFamiliar
 
   return (
     <div className="familiar-deck">
-      <FamiliarCard key={faceDownCard.id} familiar={faceDownCard} onSelect={() => null} />
+      <FaceDownCard imageUrl='https://i.imgur.com/DBC79as.png' />
       {visibleFamiliars.map((familiar) => (
         <FamiliarCard key={familiar.id} familiar={familiar} onSelect={() => onSelectFamiliar(familiar.id)} />
       ))}

@@ -312,3 +312,23 @@
   flex-wrap: wrap;
   justify-content: center;
 }
+
+/* Face Down Card Styles */
+.face-down-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 150px; /* Adjust width as needed */
+  height: 200px; /* Adjust height as needed */
+  margin: 10px;
+  background-color: #f0f0f0;
+}
+
+.face-down-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}

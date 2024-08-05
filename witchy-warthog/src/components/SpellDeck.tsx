@@ -1,20 +1,12 @@
 import React from 'react';
 import SpellCard from './SpellCard';
 import { Spell } from '../contexts/GameStateContext';
+import FaceDownCard from './FaceDownCard';
 
 interface SpellDeckProps {
   spells: Spell[];
   onSelectSpell: (id: string) => void;
 }
-
-const faceDownCard: Spell = {
-  id: 'spell0',
-  name: '',
-  description: '',
-  cost: '0',
-  isCast: false,
-  image: 'https://i.imgur.com/cqW5vls.png'
-};
 
 const SpellDeck: React.FC<SpellDeckProps> = ({ spells, onSelectSpell }) => {
   // Ensure there are at least 4 spells to display after the face-down card
@@ -22,7 +14,7 @@ const SpellDeck: React.FC<SpellDeckProps> = ({ spells, onSelectSpell }) => {
 
   return (
     <div className="spell-deck">
-      <SpellCard key={faceDownCard.id} spell={faceDownCard} onSelect={() => null} />
+      <FaceDownCard imageUrl='https://i.imgur.com/cqW5vls.png' />
       {visibleSpells.map((spell) => (
         <SpellCard key={spell.id} spell={spell} onSelect={() => onSelectSpell(spell.id)} />
       ))}
