@@ -1,7 +1,7 @@
 import React from 'react';
 import FamiliarCard from './FamiliarCard';
-import { Familiar } from '../contexts/GameStateContext';
-import FaceDownCard from './FaceDownCard';
+import { Familiar } from '../../contexts/GameStateContext';
+import FaceDownCard from '../FaceDownCard';
 
 interface FamiliarDeckProps {
   familiars: Familiar[];

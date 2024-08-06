@@ -1,7 +1,7 @@
 import React from 'react';
 import WizardCard from './WizardCard';
-import { Wizard } from '../contexts/GameStateContext';
-import FaceDownCard from './FaceDownCard';
+import { Wizard } from '../../contexts/GameStateContext';
+import FaceDownCard from '../FaceDownCard';
 
 interface WizardDeckProps {
   wizards: Wizard[];

@@ -18,7 +18,7 @@ const CardArea: React.FC<CardAreaProps> = ({ title, cards }) => {
       <div className="cards">
         {cards.map(card => (
           <div key={card.id} className="card">
-            <h3>{card.name}</h3>
+            <b>{card.name}</b>
             <p>{card.description}</p>
           </div>
         ))}

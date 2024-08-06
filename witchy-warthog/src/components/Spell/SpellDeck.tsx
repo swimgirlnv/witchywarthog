@@ -1,7 +1,7 @@
 import React from 'react';
 import SpellCard from './SpellCard';
-import { Spell } from '../contexts/GameStateContext';
-import FaceDownCard from './FaceDownCard';
+import { Spell } from '../../contexts/GameStateContext';
+import FaceDownCard from '../FaceDownCard';
 
 interface SpellDeckProps {
   spells: Spell[];

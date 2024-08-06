@@ -1,0 +1,38 @@
+
+  
+  .join-game {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('https://i.imgur.com/Db4bw2e.jpeg'); /* Replace with the correct path */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  
+  .join-game-container {
+    position: relative;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    text-align: center;
+    z-index: 1;
+  }
+  
+  .join-game-container input {
+    display: block;
+    width: fit-content;
+    padding: 10px;
+    font-size: 16px;
+  }
+  
+  .join-game-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px 0;
+  }
+  

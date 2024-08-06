@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tower } from '../contexts/GameStateContext';
+import { Tower } from '../../contexts/GameStateContext';
 
 interface TowerCardProps {
   tower: Tower;
@@ -12,7 +12,7 @@ const TowerCard: React.FC<TowerCardProps> = ({ tower, onSelect }) => {
     <div className="tower-card" onClick={onSelect}>
       <img src={tower.image} alt={tower.name} className='tower-image'/>
       <div className="tower-details">
-        <h3>{tower.name}</h3>
+        <b>{tower.name}</b>
         <p>{tower.description}</p>
         <p>{tower.power}</p>
         <p hidden={tower.cost == '0'}>Cost: {tower.cost} Gold Coins</p>

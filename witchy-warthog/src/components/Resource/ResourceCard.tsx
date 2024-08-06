@@ -24,7 +24,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ card, selected, onSelect, s
   return (
     <div className={`resource-card ${selected ? 'selected' : ''}`} onClick={onSelect}>
       <div className="gather-section">
-        <h3>Gather Reagents</h3>
+        <b>Gather Reagents</b>
         <div className="resources">
           {Object.entries(card.gather).filter(([_, amount]) => amount > 0).map(([resource, amount]) => (
             <div key={resource} className={`resource ${selectedResources.includes(resource) ? 'selected' : ''}`} onClick={(e) => {
@@ -38,7 +38,7 @@ const ResourceCard: React.FC<ResourceCardProps> = ({ card, selected, onSelect, s
         </div>
       </div>
       <div className="increase-section">
-        <h3>Increase Value</h3>
+        <b>Increase Value</b>
         <div className="resources">
           {Object.entries(card.increase).filter(([_, amount]) => amount > 0).map(([resource, amount]) => (
             <div key={resource} className="resource">

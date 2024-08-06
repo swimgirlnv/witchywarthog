@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useGameLogic } from '../gameLogic';
 import { useGameState } from '../contexts/GameStateContext';
-import ResourceCard from './ResourceCard';
-import WizardCard from './WizardCard';
+import ResourceCard from './Resource/ResourceCard';
+import WizardCard from './Wizard/WizardCard';
 
 const PlayerActions: React.FC = () => {
   const { takeTurn } = useGameLogic();

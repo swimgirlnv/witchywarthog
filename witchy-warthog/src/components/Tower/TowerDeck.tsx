@@ -1,7 +1,7 @@
 import React from 'react';
 import TowerCard from './TowerCard';
-import FaceDownCard from './FaceDownCard';
-import { Tower } from '../contexts/GameStateContext';
+import FaceDownCard from '../FaceDownCard';
+import { Tower } from '../../contexts/GameStateContext';
 
 interface TowerDeckProps {
   towers: Tower[];
