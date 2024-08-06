@@ -1,5 +1,14 @@
 # witchywarthog
 
+## Steps to Running:
+
+1) CD into witchy-warthog
+2) npm install
+3) npm run dev
+
+For now don't worry about Firebase and Vercel deployments. I (@swimgirlnv) have accidentally broken both SO working on it LOL.
+
+## Important Links
 To remove background on images: https://create.pixelcut.ai/background-remover
 
 LW game rules: https://gamers-hq.de/media/pdf/85/81/62/LizardWizard-Rulebook-na.pdf
