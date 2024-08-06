@@ -3,6 +3,7 @@ import { towerDeck, towersOnOffer } from '../cardLists/towers';
 import { wizardDeck, wizardsOnOffer } from '../cardLists/wizards';
 import { familiarDeck, familiarsOnOffer } from '../cardLists/familiars';
 import { spellDeck, spellsOnOffer } from '../cardLists/spells';
+import { resourceDeck } from '../cardLists/resources';
 
 interface Resources {
   mandrake: number;
@@ -58,7 +59,7 @@ interface ResourceOptions {
   horn: number;
 }
 
-interface ResourceCard {
+export interface ResourceCard {
   id: string;
   gather: ResourceOptions;
   increase: ResourceOptions;
@@ -98,11 +99,7 @@ const defaultState: GameState = {
       wizards: [],
       familiars: [],
       towers: [],
-      resourceCards: [
-        { id: 'card1', gather: { mandrake: 1, nightshade: 1, foxglove: 1, toadstool: 0, horn: 0 }, increase: { mandrake: 1, nightshade: 1, foxglove: 0, toadstool: 0, horn: 0 } },
-        { id: 'card2', gather: { mandrake: 0, nightshade: 1, foxglove: 1, toadstool: 1, horn: 0 }, increase: { mandrake: 0, nightshade: 0, foxglove: 1, toadstool: 1, horn: 0 } },
-        { id: 'card3', gather: { mandrake: 1, nightshade: 0, foxglove: 0, toadstool: 1, horn: 1 }, increase: { mandrake: 1, nightshade: 0, foxglove: 0, toadstool: 0, horn: 1 } },
-      ],
+      resourceCards: resourceDeck.slice(0, 3),
     },
   ],
   resources: { mandrake: 1, nightshade: 1, foxglove: 1, toadstool: 1, horn: 1, gold: 0, mana: 0 },
