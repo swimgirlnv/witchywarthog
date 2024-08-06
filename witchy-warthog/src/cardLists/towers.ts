@@ -28,5 +28,4 @@ export const towerDeck: Tower[] = [
 
 export const towersOnOffer: Tower[] = [
   { id: 'tower1', name: 'Crimson Bastion', description: 'A crimson fortress', power: '', cost: '1', image: 'https://i.imgur.com/jwUmGqI.png' },
-  { id: 'tower2', name: 'Azure Keep', description: 'Lair of blue', power: '', cost: '1', image: 'https://i.imgur.com/2TPro9X.png' },
 ];

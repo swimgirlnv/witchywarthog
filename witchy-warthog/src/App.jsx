@@ -8,7 +8,7 @@ function App() {
   return (
     <GameStateProvider>
       <div className="App">
-        <h1>Witchy Warthog</h1>
+        {/* <h1>Witchy Warthog</h1> */}
         <GameBoard />
         <PlayerActions />
       </div>

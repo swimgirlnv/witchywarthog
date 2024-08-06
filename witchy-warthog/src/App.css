@@ -17,6 +17,35 @@
   justify-content: center;
 }
 
+.top-board {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.tower-offer {
+  display: flex;
+  justify-content: center;
+}
+
+.wizard-offer {
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-board {
+  display: flex;
+}
+
+.familiar-offer {
+  display: flex;
+  justify-content: center;
+}
+
+.spell-offer {
+  display: flex;
+  justify-content: center;
+}
+
 .resource-tracks, .player-resources {
   display: flex;
   flex-wrap: wrap;
@@ -166,12 +195,13 @@
   border: 1px solid #999;
   border-radius: 8px;
   width: 200px;
+  height: fit-content;
   margin: 10px;
   padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  background-image: linear-gradient( rgb(250,246,217), rgb(202,191,196));
   align-items: center;
 }
 
@@ -195,7 +225,7 @@
 
 .wizard-deck {
   display: flex;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
   justify-content: center;
 }
 
@@ -204,12 +234,13 @@
   border: 1px solid #999;
   border-radius: 8px;
   width: 200px;
+  height: fit-content;
   margin: 10px;
   padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  background-color: rgb(240, 239, 234);
   align-items: center;
 }
 
@@ -242,12 +273,13 @@
   border: 1px solid #999;
   border-radius: 8px;
   width: 200px;
+  height: fit-content;
   margin: 10px;
   padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  background-color: rgb(243,237,208);
   align-items: center;
 }
 
@@ -280,12 +312,13 @@
   border: 1px solid #999;
   border-radius: 8px;
   width: 200px;
+  height: fit-content;
   margin: 10px;
   padding: 10px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  background-color: #f0f0f0;
+  background-color: rgb(196,174,190);
   align-items: center;
 }
 
@@ -318,17 +351,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  width: 150px; /* Adjust width as needed */
-  height: 200px; /* Adjust height as needed */
   margin: 10px;
-  background-color: #f0f0f0;
 }
 
 .face-down-card-image {
-  width: 100%;
+  width: 300px;
   height: 100%;
-  object-fit: cover;
+  object-fit:fill;
   border-radius: 8px;
 }

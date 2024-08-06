@@ -9,11 +9,11 @@ interface TowerDeckProps {
 }
 
 const TowerDeck: React.FC<TowerDeckProps> = ({ towers, onSelectTower }) => {
-  const visibleTowers = towers.slice(0, 2);
+  const visibleTowers = towers.slice(0, 1);
 
   return (
     <div className="tower-deck">
-      <FaceDownCard imageUrl="https://i.imgur.com/CpSDZCN.png" />
+      {/* <FaceDownCard imageUrl="https://i.imgur.com/CpSDZCN.png" /> */}
       {visibleTowers.map((tower) => (
         <TowerCard key={tower.id} tower={tower} onSelect={() => onSelectTower(tower.id)} />
       ))}

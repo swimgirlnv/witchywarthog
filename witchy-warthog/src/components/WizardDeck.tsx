@@ -14,7 +14,7 @@ const WizardDeck: React.FC<WizardDeckProps> = ({ wizards, onSelectWizard }) => {
 
   return (
     <div className="wizard-deck">
-      <FaceDownCard imageUrl='https://i.imgur.com/178eULE.png' />
+      {/* <FaceDownCard imageUrl='https://i.imgur.com/178eULE.png' /> */}
       {visibleWizards.map((wizard) => (
         <WizardCard key={wizard.id} wizard={wizard} onSelect={() => onSelectWizard(wizard.id)} />
       ))}

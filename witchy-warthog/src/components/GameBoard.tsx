@@ -7,6 +7,7 @@ import WizardCard from './WizardCard';
 import TowerDeck from './TowerDeck';
 import FamiliarDeck from './FamiliarDeck';
 import SpellDeck from './SpellDeck';
+import FaceDownCard from './FaceDownCard';
 
 const GameBoard: React.FC = () => {
   const { gameState } = useGameState();
@@ -41,21 +42,37 @@ const GameBoard: React.FC = () => {
         <ResourceTrack resource="Horn" amount={gameState.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
       </div>
       <div className="card-areas">
-        <div className="tower-deck">
-          <h2>Towers on Offer</h2>
-          <TowerDeck towers={gameState.towersOnOffer} onSelectTower={handleSelectTower} />
+        <div className='top-board'>
+          <div className="tower-offer">
+            <div className=''>
+              <h2>Towers on Offer</h2>
+              <FaceDownCard imageUrl='https://i.imgur.com/CpSDZCN.png' />
+            </div>
+            <TowerDeck towers={gameState.towersOnOffer} onSelectTower={handleSelectTower} />
+          </div>
+          <div className="wizard-offer">
+            <div className=''>
+              <h2>Wizards on Offer</h2>
+              <FaceDownCard imageUrl='https://i.imgur.com/178eULE.png' />
+            </div>
+            <WizardDeck wizards={gameState.wizardsOnOffer} onSelectWizard={handleSelectWizard} />
+          </div>
         </div>
-        <div className="wizard-deck">
-          <h2>Wizards on Offer</h2>
-          <WizardDeck wizards={gameState.wizardsOnOffer} onSelectWizard={handleSelectWizard} />
-        </div>
-        <div className="familiar-deck">
-          <h2>Familiars on Offer</h2>
-          <FamiliarDeck familiars={gameState.familiarsOnOffer} onSelectFamiliar={handleSelectFamiliar}/>
-        </div>
-        <div className="spell-deck">
-          <h2>Spells on Offer</h2>
-          <SpellDeck spells={gameState.spellsOnOffer} onSelectSpell={handleSelectSpell}/>
+        <div className='bottom-board'>
+          <div className="familiar-offer">
+            <div className=''>
+              <h2>Familiars on Offer</h2>
+              <FaceDownCard imageUrl='https://i.imgur.com/VxxrBB8.png' />
+            </div>
+            <FamiliarDeck familiars={gameState.familiarsOnOffer} onSelectFamiliar={handleSelectFamiliar}/>
+          </div>
+          <div className="spell-offer">
+            <div className=''>
+              <h2>Spells on Offer</h2>
+              <FaceDownCard imageUrl='https://i.imgur.com/cqW5vls.png' />
+            </div>
+            <SpellDeck spells={gameState.spellsOnOffer} onSelectSpell={handleSelectSpell}/>
+          </div>
         </div>
       </div>
       <div className="player-resources">
