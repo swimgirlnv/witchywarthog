@@ -14,9 +14,9 @@ const assignRandomPower = (): Power => {
     return powers[Math.floor(Math.random() * powers.length)];
 };
 
-const assignRandomCost = (): string => {
+const assignRandomCost = (): number => {
     const cost = Math.floor(Math.random() * 3) + 1;
-    return `${cost} Gold Coins`;
+    return cost;;
 }
 
 export const towerDeck: Tower[] = [

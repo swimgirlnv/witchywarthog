@@ -1,3 +1,4 @@
+import { spellDeck } from './cardLists/spells';
 import { useGameState } from './contexts/GameStateContext';
 
 export const useGameLogic = () => {
@@ -10,19 +11,16 @@ export const useGameLogic = () => {
     const resourceCard = player.resourceCards.find(card => card.id === cardId);
     if (!resourceCard) return;
 
-    // Gather selected resources
     selectedResources.forEach(resource => {
       player.resources[resource] += resourceCard.gather[resource];
     });
 
-    // Increase value of all resources in the "Increase Value" portion
     Object.keys(resourceCard.increase).forEach(resource => {
       if (resourceCard.increase[resource] > 0) {
         gameState.resources[resource] += resourceCard.increase[resource];
       }
     });
 
-    // Optional: Try to cast a spell if resources allow
     player.spells.forEach(spell => {
       if (!spell.isCast) {
         const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
@@ -30,7 +28,6 @@ export const useGameLogic = () => {
           Object.keys(spell.cost).forEach(resource => {
             player.resources[resource] -= spell.cost[resource];
           });
-          // Mark the spell as cast
           spell.isCast = true;
         }
       }
@@ -39,7 +36,7 @@ export const useGameLogic = () => {
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
-      resources: { ...gameState.resources }, // Ensure the state updates for board tracker
+      resources: { ...gameState.resources },
     });
   };
 
@@ -59,12 +56,11 @@ export const useGameLogic = () => {
       return;
     }
 
-    const resourceValue = boardResourceAmount; // Value is the current amount on the board tracker
+    const resourceValue = boardResourceAmount;
     const manaGained = quantity * resourceValue;
     player.resources[resource] -= quantity;
     player.resources.mana += manaGained;
 
-    // Reduce the board tracker value
     gameState.resources[resource] = Math.max(1, boardResourceAmount - quantity);
 
     setGameState({
@@ -89,7 +85,6 @@ export const useGameLogic = () => {
     player.resources.mana -= bidAmount;
     player.wizards.push(wizard);
 
-    // Remove wizard from the offer and replenish from the deck
     gameState.wizardsOnOffer = gameState.wizardsOnOffer.filter(w => w.id !== wizardId);
     if (gameState.wizardDeck.length > 0) {
       const newWizard = gameState.wizardDeck.pop();
@@ -108,19 +103,18 @@ export const useGameLogic = () => {
   const researchSpell = (playerId: string, spellId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
-  
+
     const spell = gameState.spellsOnOffer.find(s => s.id === spellId);
     if (!spell) return;
-  
+
     if (player.resources.mana < spell.manaCost) {
       alert(`You do not have enough mana to research ${spell.name}.`);
       return;
     }
-  
+
     player.resources.mana -= spell.manaCost;
     player.spells.push({ ...spell, isCast: false });
-  
-    // Remove spell from the offer and replenish from the deck
+
     gameState.spellsOnOffer = gameState.spellsOnOffer.filter(s => s.id !== spellId);
     if (gameState.spellDeck.length > 0) {
       const newSpell = gameState.spellDeck.pop();
@@ -128,17 +122,15 @@ export const useGameLogic = () => {
         gameState.spellsOnOffer.push(newSpell);
       }
     }
-  
+
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       spellsOnOffer: [...gameState.spellsOnOffer],
     });
-  
-    // Optional: Try to cast the researched spell if resources allow
+
     castSpell(playerId, spellId);
   };
-  
 
   const castSpell = (playerId: string, spellId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
@@ -170,7 +162,7 @@ export const useGameLogic = () => {
     const tower = gameState.towersOnOffer.find(t => t.id === towerId);
     if (!tower) return;
 
-    const towerCost = parseInt(tower.cost.split(' ')[0]);
+    const towerCost = tower.cost;
     if (player.resources.gold < towerCost) {
       alert(`You do not have enough gold to create ${tower.name}.`);
       return;
@@ -179,7 +171,6 @@ export const useGameLogic = () => {
     player.resources.gold -= towerCost;
     player.towers.push(tower);
 
-    // Remove tower from the offer and replenish from the deck
     gameState.towersOnOffer = gameState.towersOnOffer.filter(t => t.id !== towerId);
     if (gameState.towerDeck.length > 0) {
       const newTower = gameState.towerDeck.pop();
@@ -195,23 +186,59 @@ export const useGameLogic = () => {
     });
   };
 
-  const summonFamiliar = (playerId: string, familiarId: string) => {
+  const summonFamiliar = (playerId: string, familiarId: string, action: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
     const familiar = gameState.familiarsOnOffer.find(f => f.id === familiarId);
     if (!familiar) return;
 
-    const familiarCost = parseInt(familiar.cost.split(' ')[0]);
+    const familiarCost = familiar.cost;
     if (player.resources.mana < familiarCost) {
       alert(`You do not have enough mana to summon ${familiar.name}.`);
       return;
     }
 
     player.resources.mana -= familiarCost;
+
+    switch (action) {
+      case 'collectGold':
+        const goldEarned = ['wizards', 'towers', 'spells', 'familiars']
+          .map(type => player[type].filter(card => card.power.id === familiar.power.id).length)
+          .reduce((sum, count) => sum + count, 0);
+        player.resources.gold += goldEarned;
+        break;
+      case 'gatherResourcesAndCastSpells':
+        player.resources[familiar.power.id] += 4;
+        player.spells.forEach(spell => {
+          if (!spell.isCast) {
+            const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+            if (canCast) {
+              Object.keys(spell.cost).forEach(resource => {
+                player.resources[resource] -= spell.cost[resource];
+              });
+              spell.isCast = true;
+            }
+          }
+        });
+        break;
+      case 'newResearch':
+        gameState.spellsOnOffer = spellDeck.splice(0, 4);
+        const newSpell = gameState.spellsOnOffer.pop();
+        if (newSpell) {
+          player.spells.push({ ...newSpell, isCast: false });
+          gameState.spellsOnOffer.push(...spellDeck.splice(0, 1));
+        }
+        break;
+      case 'enterDungeon':
+        // Dungeon logic
+        break;
+      default:
+        break;
+    }
+
     player.familiars.push(familiar);
 
-    // Remove familiar from the offer and replenish from the deck
     gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiarId);
     if (gameState.familiarDeck.length > 0) {
       const newFamiliar = gameState.familiarDeck.pop();
@@ -245,7 +272,7 @@ export const useGameLogic = () => {
         createTower(playerId, payload.towerId);
         break;
       case 'summonFamiliar':
-        summonFamiliar(playerId, payload.familiarId);
+        summonFamiliar(playerId, payload.familiarId, payload.action);
         break;
       default:
         break;

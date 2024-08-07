@@ -39,7 +39,7 @@ export interface Familiar {
   name: string;
   description: string;
   power: Power;
-  cost: string;
+  cost: number;
   image: string;
 }
 
@@ -48,7 +48,7 @@ export interface Tower {
   name: string;
   description: string;
   power: Power;
-  cost: string;
+  cost: number;
   image: string;
 }
 
@@ -96,6 +96,14 @@ interface GameState {
   familiarsOnOffer: Familiar[];
   spellDeck: Spell[];
   spellsOnOffer: Spell[];
+  dungeonDeck: DungeonCard[];
+}
+
+export interface DungeonCard {
+  id: string;
+  type: 'monster' | 'treasure';
+  description: string;
+  image: string;
 }
 
 const generateRandomResources = (): ResourceOptions => {
@@ -136,16 +144,17 @@ const defaultState: GameState = {
   familiarsOnOffer: familiarsOnOffer,
   spellDeck: spellDeck,
   spellsOnOffer: spellsOnOffer,
+  dungeonDeck: [], // Initialize with your dungeon cards
 };
 
 const GameStateContext = createContext<{
   gameState: GameState;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
-  takeTurn: (playerId: string, action: string, payload: any) => void; // Add takeTurn here
+  takeTurn: (playerId: string, action: string, payload: any) => void;
 }>({
   gameState: defaultState,
   setGameState: () => {},
-  takeTurn: () => {}, // Add default noop implementation
+  takeTurn: () => {},
 });
 
 export const useGameState = () => useContext(GameStateContext);
@@ -197,6 +206,52 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
           if (tower && player.resources.gold >= parseInt(tower.cost)) {
             player.towers.push(tower);
             player.resources.gold -= parseInt(tower.cost);
+            newPlayers = newPlayers.map(p => {
+              if (p.id === playerId) return player;
+              return p;
+            });
+          }
+          break;
+        case 'summonFamiliar':
+          const familiar = prevState.familiarsOnOffer.find(f => f.id === payload.familiarId);
+          if (familiar && player.resources.mana >= familiar.cost) {
+            player.resources.mana -= familiar.cost;
+            switch (payload.action) {
+              case 'collectGold':
+                const goldEarned = ['wizards', 'towers', 'spells', 'familiars']
+                  .map(type => player[type].filter(card => card.power.id === familiar.power.id).length)
+                  .reduce((sum, count) => sum + count, 0);
+                player.resources.gold += goldEarned;
+                break;
+              case 'gatherResourcesAndCastSpells':
+                player.resources[familiar.power.id] += 4; // Assuming the familiar card's power id maps to a resource type
+                player.spells.forEach(spell => {
+                  if (!spell.isCast) {
+                    const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+                    if (canCast) {
+                      Object.keys(spell.cost).forEach(resource => {
+                        player.resources[resource] -= spell.cost[resource];
+                      });
+                      spell.isCast = true;
+                    }
+                  }
+                });
+                break;
+              case 'newResearch':
+                prevState.spellsOnOffer = spellDeck.splice(0, 4);
+                const newSpell = prevState.spellsOnOffer.pop();
+                if (newSpell) {
+                  player.spells.push({ ...newSpell, isCast: false });
+                  prevState.spellsOnOffer.push(...spellDeck.splice(0, 1));
+                }
+                break;
+              case 'enterDungeon':
+                // Logic for dungeon modal
+                break;
+              default:
+                break;
+            }
+            player.familiars.push(familiar);
             newPlayers = newPlayers.map(p => {
               if (p.id === playerId) return player;
               return p;

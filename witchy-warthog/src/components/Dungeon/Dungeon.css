@@ -1,0 +1,19 @@
+.dungeon-cards {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  .dungeon-card {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+  }
+  
+  .dungeon-card img {
+    width: 100px;
+    height: auto;
+    margin-bottom: 10px;
+  }
+  

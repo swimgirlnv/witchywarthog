@@ -6,6 +6,7 @@ import WizardCard from '../Wizard/WizardCard';
 import SpellCard from '../Spell/SpellCard';
 import TowerCard from '../Tower/TowerCard';
 import './PlayerActions.css';
+import FamiliarActions from '../Familiar/FamiliarAction';
 
 const PlayerActions: React.FC = () => {
   const { takeTurn } = useGameLogic();
@@ -115,6 +116,7 @@ const PlayerActions: React.FC = () => {
         <button onClick={() => handleActionSelection('recruitWizard')}>Recruit Wizard</button>
         <button onClick={() => handleActionSelection('researchSpell')}>Research Spell</button>
         <button onClick={() => handleActionSelection('createTower')}>Create Tower</button>
+        <button onClick={() => handleActionSelection('summonFamiliar')}>Summon Familiar</button>
       </div>
 
       {actionType === 'gatherResources' && (
@@ -213,6 +215,12 @@ const PlayerActions: React.FC = () => {
             ))}
           </div>
           <button onClick={handleCreateTower}>Create Tower</button>
+        </>
+      )}
+
+      {actionType === 'summonFamiliar' && (
+        <>
+          <FamiliarActions />
         </>
       )}
     </div>
