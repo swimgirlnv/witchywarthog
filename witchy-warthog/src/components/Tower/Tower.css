@@ -1,0 +1,73 @@
+
+/* Tower Card Styles */
+.tower-card {
+    border: 1px solid #999;
+    border-radius: 8px;
+    width: 150px;
+    height: fit-content;
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(240, 239, 234);
+    align-items: center;
+    position: relative;
+  }
+  
+  .tower-card .tower-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .tower-card .wizard-details {
+    text-align: center;
+  }
+  
+  .tower-card .wizard-details h3 {
+    margin: 10px 0 5px;
+  }
+  
+  .tower-card .wizard-details p {
+    margin: 5px 0;
+  }
+  
+  .tower-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Power Icon Styles */
+  .power-icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Tooltip styling */
+.tooltip {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+  }
+  
+  .tower-card:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+  }

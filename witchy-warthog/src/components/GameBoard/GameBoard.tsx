@@ -7,6 +7,7 @@ import TowerDeck from '../Tower/TowerDeck';
 import FamiliarDeck from '../Familiar/FamiliarDeck';
 import SpellDeck from '../Spell/SpellDeck';
 import FaceDownCard from '../FaceDownCard';
+import PlayerActions from '../PlayerActions/PlayerActions';
 
 const GameBoard: React.FC = () => {
   const { gameState } = useGameState();
@@ -87,6 +88,7 @@ const GameBoard: React.FC = () => {
               <ResourceTrack resource="Gold" amount={player.resources.gold} iconUrl="https://i.imgur.com/plvPmY5.png" />
               <ResourceTrack resource="Mana" amount={player.resources.mana} iconUrl="https://i.imgur.com/z9Gxixc.png" />
             </div>
+            <PlayerActions />
             <div className="player-cards">
               <CardArea title="Towers" cards={player.towers} />
               <CardArea title="Wizards" cards={player.wizards} />

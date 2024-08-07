@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { useGameLogic } from '../gameLogic';
-import { useGameState } from '../contexts/GameStateContext';
-import ResourceCard from './Resource/ResourceCard';
-import WizardCard from './Wizard/WizardCard';
+import { useGameLogic } from '../../gameLogic';
+import { useGameState } from '../../contexts/GameStateContext';
+import ResourceCard from '../Resource/ResourceCard';
+import WizardCard from '../Wizard/WizardCard';
+import SpellCard from '../Spell/SpellCard';
+import './PlayerActions.css';
 
 const PlayerActions: React.FC = () => {
   const { takeTurn } = useGameLogic();
@@ -16,6 +18,7 @@ const PlayerActions: React.FC = () => {
   const [currentWizard, setCurrentWizard] = useState<string | null>(null);
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState<number>(0);
   const [biddingActive, setBiddingActive] = useState<boolean>(false);
+  const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
 
   const handleResourceSelection = (resource: string) => {
     setSelectedResources(prev =>
@@ -71,21 +74,35 @@ const PlayerActions: React.FC = () => {
     }
   };
 
+  const handleResearchSpell = () => {
+    if (selectedSpellId) {
+      takeTurn('player1', 'researchSpell', { spellId: selectedSpellId });
+      setSelectedSpellId(null);
+      setActionType(null);
+    } else {
+      alert('Please select a spell to research.');
+    }
+  };
+
   const handleActionSelection = (action: string) => {
     setActionType(action);
     setSelectedCardId(null);
     setSelectedResources([]);
     setResourceToConvert(null);
     setQuantityToConvert(0);
+    setSelectedSpellId(null);
   };
 
   return (
     <div className="player-actions">
       <h2>Choose an Action</h2>
-      <button onClick={() => handleActionSelection('gatherResources')}>Gather Resources</button>
-      <button onClick={() => handleActionSelection('convertResourcesToMana')}>Convert Resources to Mana</button>
-      <button onClick={() => handleActionSelection('recruitWizard')}>Recruit Wizard</button>
-      
+      <div className="action-buttons">
+        <button onClick={() => handleActionSelection('gatherResources')}>Gather Resources</button>
+        <button onClick={() => handleActionSelection('convertResourcesToMana')}>Convert Resources to Mana</button>
+        <button onClick={() => handleActionSelection('recruitWizard')}>Recruit Wizard</button>
+        <button onClick={() => handleActionSelection('researchSpell')}>Research Spell</button>
+      </div>
+
       {actionType === 'gatherResources' && (
         <>
           <h2>Choose a Resource Card</h2>
@@ -150,6 +167,22 @@ const PlayerActions: React.FC = () => {
               <button onClick={handlePass}>Pass</button>
             </>
           )}
+        </>
+      )}
+
+      {actionType === 'researchSpell' && (
+        <>
+          <h2>Research a Spell</h2>
+          <div className="spells-on-offer">
+            {gameState.spellsOnOffer.map(spell => (
+              <SpellCard
+                key={spell.id}
+                spell={spell}
+                onSelect={() => setSelectedSpellId(spell.id)}
+              />
+            ))}
+          </div>
+          <button onClick={handleResearchSpell}>Research Spell</button>
         </>
       )}
 

@@ -1,0 +1,94 @@
+/* Spell Card Styles */
+.spell-card {
+    border: 1px solid #999;
+    border-radius: 8px;
+    width: 100px;
+    height: fit-content;
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(196,174,190);
+    align-items: center;
+    position: relative; /* Added for positioning the power icon */
+  }
+  
+  .spell-card .spell-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .spell-card .spell-details {
+    text-align: center;
+  }
+  
+  .spell-card .spell-details h3 {
+    margin: 10px 0 5px;
+  }
+  
+  .spell-card .spell-details p {
+    margin: 5px 0;
+  }
+  
+  .spell-deck {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .spell-details {
+    text-align: center;
+  }
+  
+  .spell-cost {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .resource-cost {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-right: 5px;
+  }
+  
+  .resource-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+
+  /* Power Icon Styles */
+  .power-icon {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+  }
+
+/* Tooltip styling */
+.tooltip {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: black;
+    color: white;
+    padding: 5px;
+    border-radius: 5px;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s;
+    z-index: 1;
+  }
+  
+  .spell-card:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+  }

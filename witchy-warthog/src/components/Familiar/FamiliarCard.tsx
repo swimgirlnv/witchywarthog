@@ -1,5 +1,6 @@
 import React from 'react';
 import { Familiar } from '../../contexts/GameStateContext';
+import './Familiar.css';
 
 interface FamiliarCardProps {
   familiar: Familiar;
@@ -10,12 +11,13 @@ const FamiliarCard: React.FC<FamiliarCardProps> = ({ familiar, onSelect }) => {
 
   return (
     <div className="familiar-card" onClick={onSelect}>
-      <img src={familiar.image} alt={familiar.name} className='familiar-image'/>
+      <img src={familiar.power.image} alt={familiar.power.name} className="power-icon" />
+      <img src={familiar.image} alt={familiar.name} className='familiar-image' />
+      <div className="tooltip">{familiar.power.name}</div>
       <div className="familiar-details">
         <b>{familiar.name}</b>
         <p>{familiar.description}</p>
-        <p>{familiar.power}</p>
-        <p hidden={familiar.cost == '0'}>Cost: {familiar.cost} Mana</p>
+        <p hidden={familiar.cost == '0'}>Cost: {familiar.cost}</p>
       </div>
     </div>
   );

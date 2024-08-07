@@ -1,34 +1,67 @@
-import { Familiar } from "../contexts/GameStateContext";
+import { Familiar, Power } from "../contexts/GameStateContext";
 
-export const familiarDeck: Familiar[] = [
-    { id: 'familiar1', name: 'Bat', description: 'A flying familiar', power: '', cost: '', image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar2', name: 'Cat', description: 'A feline familiar', power: '', cost: '', image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar3', name: 'Dog', description: 'A loyal familiar', power: '', cost: '', image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar4', name: 'Eagle', description: 'A soaring familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar5', name: 'Frog', description: 'A hopping familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' }, //beginning of placeholders
-    { id: 'familiar6', name: 'Giraffe', description: 'A tall familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar7', name: 'Horse', description: 'A galloping familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar8', name: 'Iguana', description: 'A scaly familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar9', name: 'Jaguar', description: 'A spotted familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar10', name: 'Kangaroo', description: 'A hopping familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar11', name: 'Lion', description: 'A roaring familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar12', name: 'Monkey', description: 'A swinging familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar13', name: 'Narwhal', description: 'A tusked familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar14', name: 'Owl', description: 'A wise familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar15', name: 'Penguin', description: 'A waddling familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar16', name: 'Quokka', description: 'A smiling familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar17', name: 'Raccoon', description: 'A masked familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar18', name: 'Sloth', description: 'A slow familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar19', name: 'Tiger', description: 'A striped familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar20', name: 'Unicorn', description: 'A magical familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar21', name: 'Vulture', description: 'A scavenging familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar22', name: 'Walrus', description: 'A tusked familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar23', name: 'Xerus', description: 'A burrowing familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar24', name: 'Yak', description: 'A shaggy familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar25', name: 'Zebra', description: 'A striped familiar', power: '', cost: '',  image: 'https://i.imgur.com/1zn1W9K.png' },
-];
+const powers: Power[] = [
+    { id: '1', name: 'Conjuring', description: 'Summoning creatures and objects', image: 'https://i.imgur.com/a4RpdV0.png' },
+    { id: '2', name: 'Sorcery', description: 'Casting powerful spells', image: 'https://i.imgur.com/wIuKR49.png' },
+    { id: '3', name: 'Alchemy', description: 'Transmuting substances', image: 'https://i.imgur.com/oKHPi2G.png' },
+    { id: '4', name: 'Enchantment', description: 'Imbuing objects with magic', image: 'https://i.imgur.com/0TCztl1.png' },
+    { id: '5', name: 'Druidry', description: 'Harnessing nature\'s power', image: 'https://i.imgur.com/L1kniUc.png' },
+    { id: '6', name: 'Thaumaturgy', description: 'Performing miracles and wonders', image: 'https://i.imgur.com/eotB4wd.png' },
+    { id: '7', name: 'Necromancy', description: 'Communicating with the dead', image: 'https://i.imgur.com/n4UFpM6.png' },
+  ];
 
-export const familiarsOnOffer: Familiar[] = [
-    { id: 'familiar1', name: 'Bat', description: 'A flying familiar', power: '', cost: '', image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'familiar2', name: 'Cat', description: 'A feline familiar', power: '', cost: '', image: 'https://i.imgur.com/1zn1W9K.png' },
-];
+const powerImages: { [key: string]: string } = {
+  'Conjuring': 'https://i.imgur.com/z2dJs40.png',
+  'Sorcery': 'https://i.imgur.com/2HtdLXw.png',
+  'Alchemy': 'https://i.imgur.com/E9cmtKv.png',
+  'Enchantment': 'https://i.imgur.com/Mn4wIH2.png',
+  'Druidry': 'https://i.imgur.com/WP7F6ou.png',
+  'Thaumaturgy': 'https://i.imgur.com/oEa7XMn.png',
+  'Necromancy': 'https://i.imgur.com/wYbpnr4.png',
+};
+
+const familiarDescriptions: { [key: string]: string } = {
+    'Conjuring': 'Summoned from another realm',
+    'Sorcery': 'Imbued with powerful magic',
+    'Alchemy': 'Transmuted from one substance to another',
+    'Enchantment': 'Imbued with magical properties',
+    'Druidry': 'Imbued with the power of nature',
+    'Thaumaturgy': 'Imbued with miraculous powers',
+    'Necromancy': 'Imbued with the power of the dead',
+    };
+
+const familiarNames: { [key: string]: string } = {
+    'Conjuring': 'Summoner Fox',
+    'Sorcery': 'Enchanted Owl',
+    'Alchemy': 'Transmuted Serpent',
+    'Enchantment': 'Magical Deer',
+    'Druidry': 'Spirit Wolf',
+    'Thaumaturgy': 'Miracle Phoenix',
+    'Necromancy': 'Undead Raven',
+    };
+
+const assignRandomPower = (): Power => {
+  return powers[Math.floor(Math.random() * powers.length)];
+};
+
+const assignRandomCost = (): string => {
+    const cost = Math.floor(Math.random() * 3) + 1;
+    return `${cost} Mana`;
+    };
+
+
+export const familiarDeck: Familiar[] = Array.from({ length: 25 }, (_, index) => {
+    const id = `familiar${index + 1}`;
+    const power = assignRandomPower();
+    return {
+      id,
+      name: familiarNames[power.name],
+      description: familiarDescriptions[power.name],
+      power: power,
+      cost: assignRandomCost(),
+      image: powerImages[power.name],
+    };
+  });
+  
+  export const familiarsOnOffer: Familiar[] = familiarDeck.slice(0, 2);
+  
