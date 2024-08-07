@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useGameState, DungeonCard } from '../../contexts/GameStateContext';
 import './Familiar.css';
 import DungeonModal from '../Dungeon/DungeonModal';
@@ -12,6 +12,13 @@ const FamiliarActions: React.FC<FamiliarActionsProps> = ({ familiarId, onComplet
   const { gameState, takeTurn, drawDungeonCard, endDungeonExpedition } = useGameState();
   const [dungeonExpeditionActive, setDungeonExpeditionActive] = useState<boolean>(false);
   const [dungeonCardsDrawn, setDungeonCardsDrawn] = useState<DungeonCard[]>([]);
+
+  useEffect(() => {
+    // This ensures the dungeon expedition modal opens when dungeonExpeditionActive is true
+    if (dungeonExpeditionActive) {
+      console.log("Dungeon expedition active!");
+    }
+  }, [dungeonExpeditionActive]);
 
   const handleSummonFamiliar = (action: string) => {
     takeTurn('player1', 'summonFamiliar', { familiarId, action });

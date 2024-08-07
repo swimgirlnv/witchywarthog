@@ -1,6 +1,6 @@
-const generateRandomValue = (min: number, max: number): string => {
+const generateRandomValue = (min: number, max: number): number => {
     const value = Math.floor(Math.random() * (max - min + 1)) + min;
-    return value + ' Gold';
+    return value;
   };
   
   const monsterImages = [
