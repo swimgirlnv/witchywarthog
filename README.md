@@ -16,10 +16,16 @@ LW game rules: https://gamers-hq.de/media/pdf/85/81/62/LizardWizard-Rulebook-na.
 imgur: https://imgur.com/a/witchy-warthog-Irgfgwi
 
 login: http://localhost:5173/
+![alt text](https://i.imgur.com/wMGJbqt.jpeg)
+
 
 join: http://localhost:5173/join
+![alt text](https://i.imgur.com/dUK6FAg.jpeg)
+
 
 game: http://localhost:5173/game
+![alt text](https://i.imgur.com/woHmyEy.png)
+
 
 ## TODOs
 - Add Actions:
