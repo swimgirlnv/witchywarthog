@@ -4,6 +4,7 @@ import { wizardDeck, wizardsOnOffer } from '../cardLists/wizards';
 import { familiarDeck, familiarsOnOffer } from '../cardLists/familiars';
 import { spellDeck, spellsOnOffer } from '../cardLists/spells';
 import { resourceDeck } from '../cardLists/resources';
+import { dungeonDeckData, shuffledDungeonDeck } from '../cardLists/dungeon';
 
 interface Resources {
   mandrake: number;
@@ -83,6 +84,16 @@ interface Player {
   familiars: Familiar[];
   towers: Tower[];
   resourceCards: ResourceCard[];
+  dungeonHits: number;
+  dungeonTreasures: DungeonCard[];
+}
+
+export interface DungeonCard {
+  id: string;
+  type: 'monster' | 'treasure';
+  description: string;
+  image: string;
+  value?: number;
 }
 
 interface GameState {
@@ -97,13 +108,6 @@ interface GameState {
   spellDeck: Spell[];
   spellsOnOffer: Spell[];
   dungeonDeck: DungeonCard[];
-}
-
-export interface DungeonCard {
-  id: string;
-  type: 'monster' | 'treasure';
-  description: string;
-  image: string;
 }
 
 const generateRandomResources = (): ResourceOptions => {
@@ -127,12 +131,14 @@ const defaultState: GameState = {
     {
       id: 'player1',
       name: 'Player 1',
-      resources: { mandrake: 0, nightshade: 0, foxglove: 0, toadstool: 0, horn: 0, gold: 0, mana: 0 },
+      resources: { mandrake: 10, nightshade: 10, foxglove: 10, toadstool: 10, horn: 10, gold: 10, mana: 10 },
       spells: [],
       wizards: [],
       familiars: [],
       towers: [],
       resourceCards: resourceDeck.slice(0, 3),
+      dungeonHits: 0,
+      dungeonTreasures: [],
     },
   ],
   resources: { mandrake: 1, nightshade: 1, foxglove: 1, toadstool: 1, horn: 1, gold: 0, mana: 0 },
@@ -144,17 +150,21 @@ const defaultState: GameState = {
   familiarsOnOffer: familiarsOnOffer,
   spellDeck: spellDeck,
   spellsOnOffer: spellsOnOffer,
-  dungeonDeck: [], // Initialize with your dungeon cards
+  dungeonDeck: shuffledDungeonDeck as DungeonCard[],
 };
 
 const GameStateContext = createContext<{
   gameState: GameState;
   setGameState: React.Dispatch<React.SetStateAction<GameState>>;
   takeTurn: (playerId: string, action: string, payload: any) => void;
+  drawDungeonCard: (playerId: string) => DungeonCard | null;
+  endDungeonExpedition: (playerId: string) => void;
 }>({
   gameState: defaultState,
   setGameState: () => {},
   takeTurn: () => {},
+  drawDungeonCard: () => null,
+  endDungeonExpedition: () => {},
 });
 
 export const useGameState = () => useContext(GameStateContext);
@@ -203,9 +213,9 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
           break;
         case 'createTower':
           const tower = prevState.towersOnOffer.find(t => t.id === payload.towerId);
-          if (tower && player.resources.gold >= parseInt(tower.cost)) {
+          if (tower && player.resources.gold >= tower.cost) {
             player.towers.push(tower);
-            player.resources.gold -= parseInt(tower.cost);
+            player.resources.gold -= tower.cost;
             newPlayers = newPlayers.map(p => {
               if (p.id === playerId) return player;
               return p;
@@ -224,7 +234,7 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
                 player.resources.gold += goldEarned;
                 break;
               case 'gatherResourcesAndCastSpells':
-                player.resources[familiar.power.id] += 4; // Assuming the familiar card's power id maps to a resource type
+                player.resources[familiar.power.id] += 4;
                 player.spells.forEach(spell => {
                   if (!spell.isCast) {
                     const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
@@ -238,15 +248,13 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
                 });
                 break;
               case 'newResearch':
-                prevState.spellsOnOffer = spellDeck.splice(0, 4);
-                const newSpell = prevState.spellsOnOffer.pop();
-                if (newSpell) {
-                  player.spells.push({ ...newSpell, isCast: false });
-                  prevState.spellsOnOffer.push(...spellDeck.splice(0, 1));
-                }
+                const newSpells = spellDeck.splice(0, 4);
+                player.spells.push(...newSpells.map(s => ({ ...s, isCast: false })));
+                gameState.spellsOnOffer.push(...spellDeck.splice(0, 4));
                 break;
               case 'enterDungeon':
-                // Logic for dungeon modal
+                player.dungeonHits = 0;
+                player.dungeonTreasures = [];
                 break;
               default:
                 break;
@@ -256,6 +264,13 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
               if (p.id === playerId) return player;
               return p;
             });
+            gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiar.id);
+            if (gameState.familiarDeck.length > 0) {
+              const newFamiliar = gameState.familiarDeck.pop();
+              if (newFamiliar) {
+                gameState.familiarsOnOffer.push(newFamiliar);
+              }
+            }
           }
           break;
         default:
@@ -265,14 +280,69 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
       return {
         ...prevState,
         players: newPlayers,
-        towersOnOffer: prevState.towerDeck.length > 0 ? [prevState.towerDeck[0]] : [],
-        towerDeck: prevState.towerDeck.slice(1),
+      };
+    });
+  };
+
+  const drawDungeonCard = (playerId: string): DungeonCard | null => {
+    const player = gameState.players.find(p => p.id === playerId);
+    if (!player) return null;
+
+    if (gameState.dungeonDeck.length === 0) {
+      alert('The dungeon is empty.');
+      return null;
+    }
+
+    const drawnCard = gameState.dungeonDeck.pop();
+    if (!drawnCard) return null;
+
+    if (drawnCard.type === 'monster') {
+      player.dungeonHits += 1;
+      if (player.dungeonHits >= 2) {
+        alert('You have taken a second hit and are defeated. All drawn cards are shuffled back into the dungeon deck.');
+        player.dungeonHits = 0;
+        player.dungeonTreasures = [];
+        gameState.dungeonDeck.push(drawnCard);
+        gameState.dungeonDeck = [...gameState.dungeonDeck, ...player.dungeonTreasures];
+        setGameState({
+          ...gameState,
+          players: gameState.players.map(p => (p.id === playerId ? player : p)),
+        });
+        return null;
+      }
+    } else {
+      player.dungeonTreasures.push(drawnCard);
+    }
+
+    setGameState({
+      ...gameState,
+      players: gameState.players.map(p => (p.id === playerId ? player : p)),
+      dungeonDeck: [...gameState.dungeonDeck],
+    });
+
+    return drawnCard;
+  };
+
+  const endDungeonExpedition = (playerId: string) => {
+    setGameState(prevState => {
+      const player = prevState.players.find(p => p.id === playerId);
+      if (!player) return prevState;
+
+      const totalGold = player.dungeonTreasures.reduce((sum, card) => sum + (card.value || 0), 0);
+      player.resources.gold += totalGold;
+
+      player.dungeonHits = 0;
+      player.dungeonTreasures = [];
+
+      return {
+        ...prevState,
+        players: prevState.players.map(p => (p.id === playerId ? player : p)),
       };
     });
   };
 
   return (
-    <GameStateContext.Provider value={{ gameState, setGameState, takeTurn }}>
+    <GameStateContext.Provider value={{ gameState, setGameState, takeTurn, drawDungeonCard, endDungeonExpedition }}>
       {children}
     </GameStateContext.Provider>
   );

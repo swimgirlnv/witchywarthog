@@ -16,7 +16,7 @@ const SpellDeck: React.FC<SpellDeckProps> = ({ spells, onSelectSpell }) => {
     <div className="spell-deck">
       {/* <FaceDownCard imageUrl='https://i.imgur.com/cqW5vls.png' /> */}
       {visibleSpells.map((spell) => (
-        <SpellCard key={spell.id} spell={spell} onSelect={() => onSelectSpell(spell.id)} />
+        <SpellCard key={spell.id} spell={spell} onSelect={() => onSelectSpell(spell.id)} isSelected={false} />
       ))}
     </div>
   );

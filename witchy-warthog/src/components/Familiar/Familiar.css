@@ -1,3 +1,57 @@
+.familiar-card {
+    border: 1px solid #999;
+    border-radius: 8px;
+    width: 100px;
+    height: fit-content;
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(196, 174, 190);
+    align-items: center;
+    position: relative;
+  }
+  
+  .familiar-card.selected {
+    border: 2px solid #333;
+  }
+  
+  .familiar-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .familiar-details {
+    text-align: center;
+  }
+  
+  .familiar-power {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .familiar-power img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+  
+  .familiar-cost {
+    margin-top: 5px;
+  }
+  
+  .familiar-action-buttons {
+    margin-top: 20px;
+  }
+  
+  .familiar-action-buttons button {
+    margin: 5px;
+  }
+  
+
 
 /* Familiar Card Styles */
 .familiar-card {

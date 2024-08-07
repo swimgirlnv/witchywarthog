@@ -89,7 +89,7 @@ const GameBoard: React.FC = () => {
               <ResourceTrack resource="Mana" amount={player.resources.mana} iconUrl="https://i.imgur.com/z9Gxixc.png" />
             </div>
             <PlayerActions />
-            <div className="player-cards">
+            <div className="player-cards">                
               <CardArea title="Towers" cards={player.towers} />
               <CardArea title="Wizards" cards={player.wizards} />
               <CardArea title="Familiars" cards={player.familiars} />

@@ -2,7 +2,7 @@ import { spellDeck } from './cardLists/spells';
 import { useGameState } from './contexts/GameStateContext';
 
 export const useGameLogic = () => {
-  const { gameState, setGameState } = useGameState();
+  const { gameState, setGameState, drawDungeonCard, endDungeonExpedition } = useGameState();
 
   const gatherResources = (playerId: string, cardId: string, selectedResources: string[]) => {
     const player = gameState.players.find(p => p.id === playerId);
@@ -46,8 +46,9 @@ export const useGameLogic = () => {
 
     const playerResourceAmount = player.resources[resource];
     if (quantity > playerResourceAmount) {
-      alert(`You can only convert up to ${playerResourceAmount} units of ${resource}.`);
-      return;
+      <ErrorModal message=`You can only convert up to ${playerResourceAmount} units of ${resource}.` />
+      //alert(`You can only convert up to ${playerResourceAmount} units of ${resource}.`);
+      //return;
     }
 
     const boardResourceAmount = gameState.resources[resource];
@@ -193,13 +194,21 @@ export const useGameLogic = () => {
     const familiar = gameState.familiarsOnOffer.find(f => f.id === familiarId);
     if (!familiar) return;
 
-    const familiarCost = familiar.cost;
-    if (player.resources.mana < familiarCost) {
+    if (player.resources.mana < familiar.cost) {
       alert(`You do not have enough mana to summon ${familiar.name}.`);
       return;
     }
 
-    player.resources.mana -= familiarCost;
+    player.resources.mana -= familiar.cost;
+    player.familiars.push(familiar);
+
+    gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiarId);
+    if (gameState.familiarDeck.length > 0) {
+      const newFamiliar = gameState.familiarDeck.pop();
+      if (newFamiliar) {
+        gameState.familiarsOnOffer.push(newFamiliar);
+      }
+    }
 
     switch (action) {
       case 'collectGold':
@@ -231,20 +240,11 @@ export const useGameLogic = () => {
         }
         break;
       case 'enterDungeon':
-        // Dungeon logic
+        player.dungeonHits = 0;
+        player.dungeonTreasures = [];
         break;
       default:
         break;
-    }
-
-    player.familiars.push(familiar);
-
-    gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiarId);
-    if (gameState.familiarDeck.length > 0) {
-      const newFamiliar = gameState.familiarDeck.pop();
-      if (newFamiliar) {
-        gameState.familiarsOnOffer.push(newFamiliar);
-      }
     }
 
     setGameState({
@@ -253,6 +253,63 @@ export const useGameLogic = () => {
       familiarsOnOffer: [...gameState.familiarsOnOffer],
     });
   };
+
+  // const drawDungeonCard = (playerId: string) => {
+  //   const player = gameState.players.find(p => p.id === playerId);
+  //   if (!player) return null;
+
+  //   if (gameState.dungeonDeck.length === 0) {
+  //     alert('The dungeon deck is empty.');
+  //     return null;
+  //   }
+
+  //   const drawnCard = gameState.dungeonDeck.pop();
+  //   if (drawnCard.type === 'monster') {
+  //     player.dungeonHits += 1;
+  //     if (player.dungeonHits >= 2) {
+  //       alert('You have been defeated in the dungeon!');
+  //       player.dungeonTreasures = [];
+  //       player.dungeonHits = 0;
+  //       gameState.dungeonDeck.push(drawnCard);
+  //       gameState.dungeonDeck = [...gameState.dungeonDeck, ...player.dungeonTreasures];
+  //       setGameState({
+  //         ...gameState,
+  //         players: gameState.players.map(p => (p.id === playerId ? player : p)),
+  //         dungeonDeck: [...gameState.dungeonDeck],
+  //       });
+  //       return null;
+  //     }
+  //   } else if (drawnCard.type === 'treasure') {
+  //     player.dungeonTreasures.push(drawnCard);
+  //   }
+
+  //   setGameState({
+  //     ...gameState,
+  //     players: gameState.players.map(p => (p.id === playerId ? player : p)),
+  //     dungeonDeck: [...gameState.dungeonDeck],
+  //   });
+
+  //   return drawnCard;
+  // };
+
+  // const endDungeonExpedition = (playerId: string) => {
+  //   const player = gameState.players.find(p => p.id === playerId);
+  //   if (!player) return;
+
+  //   const goldEarned = player.dungeonTreasures
+  //     .filter(card => card.type === 'treasure' && card.value)
+  //     .reduce((sum, card) => sum + card.value, 0);
+
+  //   player.resources.gold += goldEarned;
+
+  //   player.dungeonTreasures = [];
+  //   player.dungeonHits = 0;
+
+  //   setGameState({
+  //     ...gameState,
+  //     players: gameState.players.map(p => (p.id === playerId ? player : p)),
+  //   });
+  // };
 
   const takeTurn = (playerId: string, action: string, payload?: any) => {
     switch (action) {
@@ -279,5 +336,5 @@ export const useGameLogic = () => {
     }
   };
 
-  return { takeTurn };
+  return { takeTurn, drawDungeonCard, endDungeonExpedition };
 };

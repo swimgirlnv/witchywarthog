@@ -5,8 +5,8 @@ import ResourceCard from '../Resource/ResourceCard';
 import WizardCard from '../Wizard/WizardCard';
 import SpellCard from '../Spell/SpellCard';
 import TowerCard from '../Tower/TowerCard';
-import './PlayerActions.css';
 import FamiliarCard from '../Familiar/FamiliarCard';
+import './PlayerActions.css';
 import FamiliarActions from '../Familiar/FamiliarAction';
 
 const PlayerActions: React.FC = () => {
@@ -102,6 +102,11 @@ const PlayerActions: React.FC = () => {
   const handleSummonFamiliar = (familiarId: string) => {
     setSelectedFamiliarId(familiarId);
     setActionType('summonFamiliar');
+  };
+
+  const handleFamiliarActionComplete = () => {
+    setActionType(null);
+    setSelectedFamiliarId(null);
   };
 
   const handleActionSelection = (action: string) => {
@@ -249,7 +254,7 @@ const PlayerActions: React.FC = () => {
             ))}
           </div>
           {selectedFamiliarId && (
-            <FamiliarActions />
+            <FamiliarActions familiarId={selectedFamiliarId} onComplete={handleFamiliarActionComplete} />
           )}
         </>
       )}

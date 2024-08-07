@@ -5,6 +5,7 @@ import './Spell.css';
 interface SpellCardProps {
   spell: Spell;
   onSelect: () => void;
+  isSelected: boolean;
 }
 
 const resourceIcons: { [key: string]: string } = {

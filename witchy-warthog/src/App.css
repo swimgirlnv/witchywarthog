@@ -116,11 +116,14 @@ b {
 }
 
 .card-area {
+  display: flex;
+  flex-direction: column;
   margin: 20px;
 }
 
 .cards {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
 }
 
@@ -131,8 +134,22 @@ b {
   width: 150px;
   background:  rgba(255, 255, 255, 0.8);
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
+.card-image {
+  width: 100px;
+  height: auto;
+}
+
+.card-power-image {
+  width: 30px;
+  height: auto;
+}
 .player-area {
   border: 1px solid #ccc;
   padding: 20px;

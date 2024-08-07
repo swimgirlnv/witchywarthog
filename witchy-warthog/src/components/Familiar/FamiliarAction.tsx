@@ -1,46 +1,63 @@
 import React, { useState } from 'react';
-import { useGameState } from '../../contexts/GameStateContext';
-import FamiliarCard from '../Familiar/FamiliarCard';
+import { useGameState, DungeonCard } from '../../contexts/GameStateContext';
 import './Familiar.css';
+import DungeonModal from '../Dungeon/DungeonModal';
 
-const FamiliarActions: React.FC = () => {
-  const { gameState, takeTurn } = useGameState();
-  const [selectedFamiliarId, setSelectedFamiliarId] = useState<string | null>(null);
-  const [selectedAction, setSelectedAction] = useState<string | null>(null);
+interface FamiliarActionsProps {
+  familiarId: string;
+  onComplete: () => void;
+}
+
+const FamiliarActions: React.FC<FamiliarActionsProps> = ({ familiarId, onComplete }) => {
+  const { gameState, takeTurn, drawDungeonCard, endDungeonExpedition } = useGameState();
+  const [dungeonExpeditionActive, setDungeonExpeditionActive] = useState<boolean>(false);
+  const [dungeonCardsDrawn, setDungeonCardsDrawn] = useState<DungeonCard[]>([]);
 
   const handleSummonFamiliar = (action: string) => {
-    if (selectedFamiliarId) {
-      takeTurn('player1', 'summonFamiliar', { familiarId: selectedFamiliarId, action });
-      setSelectedFamiliarId(null);
-      setSelectedAction(null);
+    takeTurn('player1', 'summonFamiliar', { familiarId, action });
+
+    if (action === 'enterDungeon') {
+      setDungeonExpeditionActive(true);
     } else {
-      alert('Please select a familiar.');
+      onComplete();
     }
   };
 
-  const selectedFamiliar = gameState.familiarsOnOffer.find(f => f.id === selectedFamiliarId);
+  const handleDrawDungeonCard = () => {
+    const drawnCard = drawDungeonCard('player1');
+    if (drawnCard) {
+      setDungeonCardsDrawn([...dungeonCardsDrawn, drawnCard]);
+    }
+  };
+
+  const handleEndDungeonExpedition = () => {
+    endDungeonExpedition('player1');
+    setDungeonExpeditionActive(false);
+    setDungeonCardsDrawn([]);
+    onComplete();
+  };
+
+  const selectedFamiliar = gameState.familiarsOnOffer.find(f => f.id === familiarId);
 
   return (
-    <div className="familiar-actions">
-      <h2>Summon a Familiar</h2>
-      <div className="familiar-cards">
-        {gameState.familiarsOnOffer.map(familiar => (
-          <FamiliarCard
-            key={familiar.id}
-            familiar={familiar}
-            onSelect={() => setSelectedFamiliarId(familiar.id)}
-            selected={selectedFamiliarId === familiar.id}
-          />
-        ))}
-      </div>
+    <div className="familiar-actions-container">
       {selectedFamiliar && (
-        <div className="familiar-action-buttons">
-          <h3>Choose an Action</h3>
-          <button onClick={() => handleSummonFamiliar('collectGold')}>Collect Gold</button>
-          <button onClick={() => handleSummonFamiliar('gatherResourcesAndCastSpells')}>Gather Resources and Cast Spells</button>
-          <button onClick={() => handleSummonFamiliar('newResearch')}>New Research</button>
-          <button onClick={() => handleSummonFamiliar('enterDungeon')}>Enter the Dungeon</button>
-        </div>
+        <>
+          <div className="familiar-action-buttons">
+            <h3>Choose an Action</h3>
+            <button onClick={() => handleSummonFamiliar('collectGold')}>Collect Gold</button>
+            <button onClick={() => handleSummonFamiliar('gatherResourcesAndCastSpells')}>Gather Resources and Cast Spells</button>
+            <button onClick={() => handleSummonFamiliar('newResearch')}>New Research</button>
+            <button onClick={() => handleSummonFamiliar('enterDungeon')}>Enter the Dungeon</button>
+          </div>
+          {dungeonExpeditionActive && (
+            <DungeonModal
+              dungeonCardsDrawn={dungeonCardsDrawn}
+              onDrawCard={handleDrawDungeonCard}
+              onEndExpedition={handleEndDungeonExpedition}
+            />
+          )}
+        </>
       )}
     </div>
   );

@@ -5,6 +5,7 @@ import './Wizard.css';
 interface WizardCardProps {
   wizard: Wizard;
   onSelect: () => void;
+  isSelected: boolean;
 }
 
 const WizardCard: React.FC<WizardCardProps> = ({ wizard, onSelect }) => {

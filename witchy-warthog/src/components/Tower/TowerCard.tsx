@@ -5,6 +5,7 @@ import './Tower.css';
 interface TowerCardProps {
   tower: Tower;
   onSelect: () => void;
+  isSelected: boolean;
 }
 
 const TowerCard: React.FC<TowerCardProps> = ({ tower, onSelect }) => {

@@ -1,3 +1,45 @@
+.wizard-card {
+    border: 1px solid #999;
+    border-radius: 8px;
+    width: 100px;
+    height: fit-content;
+    margin: 10px;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    background-color: rgb(196, 174, 190);
+    align-items: center;
+    position: relative;
+  }
+  
+  .wizard-card.selected {
+    border: 2px solid #333;
+  }
+  
+  .wizard-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .wizard-details {
+    text-align: center;
+  }
+  
+  .wizard-power {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .wizard-power img {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+  }
+  
+
 /* Wizard Card Styles */
 .wizard-card {
     border: 1px solid #999;
