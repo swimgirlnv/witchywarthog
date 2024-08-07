@@ -4,6 +4,7 @@ import { useGameState } from '../../contexts/GameStateContext';
 import ResourceCard from '../Resource/ResourceCard';
 import WizardCard from '../Wizard/WizardCard';
 import SpellCard from '../Spell/SpellCard';
+import TowerCard from '../Tower/TowerCard';
 import './PlayerActions.css';
 
 const PlayerActions: React.FC = () => {
@@ -19,6 +20,7 @@ const PlayerActions: React.FC = () => {
   const [currentPlayerIndex, setCurrentPlayerIndex] = useState<number>(0);
   const [biddingActive, setBiddingActive] = useState<boolean>(false);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
+  const [selectedTowerId, setSelectedTowerId] = useState<string | null>(null);
 
   const handleResourceSelection = (resource: string) => {
     setSelectedResources(prev =>
@@ -84,6 +86,16 @@ const PlayerActions: React.FC = () => {
     }
   };
 
+  const handleCreateTower = () => {
+    if (selectedTowerId) {
+      takeTurn('player1', 'createTower', { towerId: selectedTowerId });
+      setSelectedTowerId(null);
+      setActionType(null);
+    } else {
+      alert('Please select a tower to create.');
+    }
+  };
+
   const handleActionSelection = (action: string) => {
     setActionType(action);
     setSelectedCardId(null);
@@ -91,6 +103,7 @@ const PlayerActions: React.FC = () => {
     setResourceToConvert(null);
     setQuantityToConvert(0);
     setSelectedSpellId(null);
+    setSelectedTowerId(null);
   };
 
   return (
@@ -101,6 +114,7 @@ const PlayerActions: React.FC = () => {
         <button onClick={() => handleActionSelection('convertResourcesToMana')}>Convert Resources to Mana</button>
         <button onClick={() => handleActionSelection('recruitWizard')}>Recruit Wizard</button>
         <button onClick={() => handleActionSelection('researchSpell')}>Research Spell</button>
+        <button onClick={() => handleActionSelection('createTower')}>Create Tower</button>
       </div>
 
       {actionType === 'gatherResources' && (
@@ -186,7 +200,21 @@ const PlayerActions: React.FC = () => {
         </>
       )}
 
-      {/* Other actions */}
+      {actionType === 'createTower' && (
+        <>
+          <h2>Create a Tower</h2>
+          <div className="towers-on-offer">
+            {gameState.towersOnOffer.map(tower => (
+              <TowerCard
+                key={tower.id}
+                tower={tower}
+                onSelect={() => setSelectedTowerId(tower.id)}
+              />
+            ))}
+          </div>
+          <button onClick={handleCreateTower}>Create Tower</button>
+        </>
+      )}
     </div>
   );
 };

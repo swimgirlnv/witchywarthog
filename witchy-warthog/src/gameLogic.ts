@@ -108,18 +108,18 @@ export const useGameLogic = () => {
   const researchSpell = (playerId: string, spellId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
-
+  
     const spell = gameState.spellsOnOffer.find(s => s.id === spellId);
     if (!spell) return;
-
-    if (player.resources.mana < spell.cost) {
+  
+    if (player.resources.mana < spell.manaCost) {
       alert(`You do not have enough mana to research ${spell.name}.`);
       return;
     }
-
-    player.resources.mana -= spell.cost;
+  
+    player.resources.mana -= spell.manaCost;
     player.spells.push({ ...spell, isCast: false });
-
+  
     // Remove spell from the offer and replenish from the deck
     gameState.spellsOnOffer = gameState.spellsOnOffer.filter(s => s.id !== spellId);
     if (gameState.spellDeck.length > 0) {
@@ -128,16 +128,17 @@ export const useGameLogic = () => {
         gameState.spellsOnOffer.push(newSpell);
       }
     }
-
+  
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       spellsOnOffer: [...gameState.spellsOnOffer],
     });
-
+  
     // Optional: Try to cast the researched spell if resources allow
     castSpell(playerId, spellId);
   };
+  
 
   const castSpell = (playerId: string, spellId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
@@ -162,34 +163,69 @@ export const useGameLogic = () => {
     });
   };
 
-
-  const createTower = (playerId: string) => {
+  const createTower = (playerId: string, towerId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
-    const newTower = { id: `tower${gameState.towers.length + 1}`, name: 'New Tower', description: 'A strong tower' };
-    gameState.towers.push(newTower);
+    const tower = gameState.towersOnOffer.find(t => t.id === towerId);
+    if (!tower) return;
+
+    const towerCost = parseInt(tower.cost.split(' ')[0]);
+    if (player.resources.gold < towerCost) {
+      alert(`You do not have enough gold to create ${tower.name}.`);
+      return;
+    }
+
+    player.resources.gold -= towerCost;
+    player.towers.push(tower);
+
+    // Remove tower from the offer and replenish from the deck
+    gameState.towersOnOffer = gameState.towersOnOffer.filter(t => t.id !== towerId);
+    if (gameState.towerDeck.length > 0) {
+      const newTower = gameState.towerDeck.pop();
+      if (newTower) {
+        gameState.towersOnOffer.push(newTower);
+      }
+    }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
+      towersOnOffer: [...gameState.towersOnOffer],
     });
   };
 
-  const summonFamiliar = (playerId: string) => {
+  const summonFamiliar = (playerId: string, familiarId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
-    const newFamiliar = { id: `familiar${player.familiars.length + 1}`, name: 'New Familiar', description: 'A loyal familiar', ability: 'Increases resource gathering' };
-    player.familiars.push(newFamiliar);
+    const familiar = gameState.familiarsOnOffer.find(f => f.id === familiarId);
+    if (!familiar) return;
+
+    const familiarCost = parseInt(familiar.cost.split(' ')[0]);
+    if (player.resources.mana < familiarCost) {
+      alert(`You do not have enough mana to summon ${familiar.name}.`);
+      return;
+    }
+
+    player.resources.mana -= familiarCost;
+    player.familiars.push(familiar);
+
+    // Remove familiar from the offer and replenish from the deck
+    gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiarId);
+    if (gameState.familiarDeck.length > 0) {
+      const newFamiliar = gameState.familiarDeck.pop();
+      if (newFamiliar) {
+        gameState.familiarsOnOffer.push(newFamiliar);
+      }
+    }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
+      familiarsOnOffer: [...gameState.familiarsOnOffer],
     });
   };
-
-  
 
   const takeTurn = (playerId: string, action: string, payload?: any) => {
     switch (action) {
@@ -203,13 +239,13 @@ export const useGameLogic = () => {
         recruitWizard(playerId, payload.wizardId, payload.bidAmount);
         break;
       case 'researchSpell':
-        researchSpell(playerId);
+        researchSpell(playerId, payload.spellId);
         break;
       case 'createTower':
-        createTower(playerId);
+        createTower(playerId, payload.towerId);
         break;
       case 'summonFamiliar':
-        summonFamiliar(playerId);
+        summonFamiliar(playerId, payload.familiarId);
         break;
       default:
         break;

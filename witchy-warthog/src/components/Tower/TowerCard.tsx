@@ -17,7 +17,7 @@ const TowerCard: React.FC<TowerCardProps> = ({ tower, onSelect }) => {
       <div className="tower-details">
         <b>{tower.name}</b>
         <p>{tower.description}</p>
-        <p hidden={tower.cost == '0'}>Cost: {tower.cost} Gold Coins</p>
+        <p hidden={tower.cost == '0'}>Cost: {tower.cost}</p>
       </div>
     </div>
   );

@@ -37,7 +37,7 @@
     flex-wrap: wrap;
     justify-content: center;
   }
-
+  
   .spell-details {
     text-align: center;
   }
@@ -61,7 +61,7 @@
     height: 20px;
     margin-right: 5px;
   }
-
+  
   /* Power Icon Styles */
   .power-icon {
     position: absolute;
@@ -70,9 +70,9 @@
     width: 20px;
     height: 20px;
   }
-
-/* Tooltip styling */
-.tooltip {
+  
+  /* Tooltip styling */
+  .tooltip {
     position: absolute;
     top: -25px;
     left: 50%;
@@ -92,3 +92,9 @@
     opacity: 1;
     visibility: visible;
   }
+  
+  .spell-mana-cost {
+    margin-top: 5px;
+    font-size: small;
+  }
+  

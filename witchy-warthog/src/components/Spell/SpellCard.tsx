@@ -23,6 +23,7 @@ const SpellCard: React.FC<SpellCardProps> = ({ spell, onSelect }) => {
       <div className="spell-details">
         <b>{spell.name}</b>
         <p>{spell.description}</p>
+        <div className="spell-mana-cost">Cost: {spell.manaCost} Mana</div>
         <div className="spell-cost">
           {Object.keys(spell.cost).map(resource => (
             spell.cost[resource] > 0 && (
