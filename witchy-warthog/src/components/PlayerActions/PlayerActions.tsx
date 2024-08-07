@@ -8,9 +8,10 @@ import TowerCard from '../Tower/TowerCard';
 import FamiliarCard from '../Familiar/FamiliarCard';
 import './PlayerActions.css';
 import FamiliarActions from '../Familiar/FamiliarAction';
+import ErrorModal from '../ErrorModal/ErrorModal';
 
 const PlayerActions: React.FC = () => {
-  const { takeTurn } = useGameLogic();
+  const { takeTurn, errorMessage, closeErrorModal } = useGameLogic();
   const { gameState } = useGameState();
   const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
   const [selectedResources, setSelectedResources] = useState<string[]>([]);
@@ -24,6 +25,7 @@ const PlayerActions: React.FC = () => {
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const [selectedTowerId, setSelectedTowerId] = useState<string | null>(null);
   const [selectedFamiliarId, setSelectedFamiliarId] = useState<string | null>(null);
+  const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(null);
 
   const handleResourceSelection = (resource: string) => {
     setSelectedResources(prev =>
@@ -38,7 +40,7 @@ const PlayerActions: React.FC = () => {
       setSelectedResources([]);
       setActionType(null);
     } else {
-      alert('Please select a card and exactly 3 resources.');
+      setLocalErrorMessage('Please select a card and exactly 3 resources.');
     }
   };
 
@@ -49,7 +51,7 @@ const PlayerActions: React.FC = () => {
       setQuantityToConvert(0);
       setActionType(null);
     } else {
-      alert('Please select a resource and a valid quantity to convert.');
+      setLocalErrorMessage('Please select a resource and a valid quantity to convert.');
     }
   };
 
@@ -62,7 +64,7 @@ const PlayerActions: React.FC = () => {
 
   const handleBid = (playerId: string, bidAmount: number) => {
     if (gameState.players[currentPlayerIndex].resources.mana < bidAmount) {
-      alert('You do not have enough mana to place this bid.');
+      setLocalErrorMessage('You do not have enough mana to place this bid.');
       return;
     }
     setCurrentBid(bidAmount);
@@ -85,7 +87,7 @@ const PlayerActions: React.FC = () => {
       setSelectedSpellId(null);
       setActionType(null);
     } else {
-      alert('Please select a spell to research.');
+      setLocalErrorMessage('Please select a spell to research.');
     }
   };
 
@@ -95,7 +97,7 @@ const PlayerActions: React.FC = () => {
       setSelectedTowerId(null);
       setActionType(null);
     } else {
-      alert('Please select a tower to create.');
+      setLocalErrorMessage('Please select a tower to create.');
     }
   };
 
@@ -119,6 +121,8 @@ const PlayerActions: React.FC = () => {
     setSelectedTowerId(null);
     setSelectedFamiliarId(null);
   };
+
+  const closeLocalErrorModal = () => setLocalErrorMessage(null);
 
   return (
     <div className="player-actions">
@@ -189,7 +193,7 @@ const PlayerActions: React.FC = () => {
                 key={wizard.id}
                 wizard={wizard}
                 onSelect={() => handleRecruitWizard(wizard.id)}
-                isSelected={currentWizard === wizard.id}
+                selected={currentWizard === wizard.id}
               />
             ))}
           </div>
@@ -215,7 +219,7 @@ const PlayerActions: React.FC = () => {
                 key={spell.id}
                 spell={spell}
                 onSelect={() => setSelectedSpellId(spell.id)}
-                isSelected={selectedSpellId === spell.id}
+                selected={selectedSpellId === spell.id}
               />
             ))}
           </div>
@@ -232,7 +236,7 @@ const PlayerActions: React.FC = () => {
                 key={tower.id}
                 tower={tower}
                 onSelect={() => setSelectedTowerId(tower.id)}
-                isSelected={selectedTowerId === tower.id}
+                selected={selectedTowerId === tower.id}
               />
             ))}
           </div>
@@ -257,6 +261,13 @@ const PlayerActions: React.FC = () => {
             <FamiliarActions familiarId={selectedFamiliarId} onComplete={handleFamiliarActionComplete} />
           )}
         </>
+      )}
+
+      {errorMessage && (
+        <ErrorModal message={errorMessage} onClose={closeErrorModal} />
+      )}
+      {localErrorMessage && (
+        <ErrorModal message={localErrorMessage} onClose={closeLocalErrorModal} />
       )}
     </div>
   );

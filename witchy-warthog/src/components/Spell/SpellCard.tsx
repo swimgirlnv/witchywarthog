@@ -5,7 +5,7 @@ import './Spell.css';
 interface SpellCardProps {
   spell: Spell;
   onSelect: () => void;
-  isSelected: boolean;
+  selected: boolean;
 }
 
 const resourceIcons: { [key: string]: string } = {
@@ -16,9 +16,9 @@ const resourceIcons: { [key: string]: string } = {
   horn: 'https://i.imgur.com/1zn1W9K.png',
 };
 
-const SpellCard: React.FC<SpellCardProps> = ({ spell, onSelect }) => {
+const SpellCard: React.FC<SpellCardProps> = ({ spell, onSelect, selected }) => {
   return (
-    <div className="spell-card" onClick={onSelect}>
+    <div className={`spell-card ${selected ? 'selected' : ''}`} onClick={onSelect}>
       <img src={spell.power.image} alt={spell.name} className="spell-image" />
       <div className="tooltip">{spell.power.name}</div>
       <div className="spell-details">

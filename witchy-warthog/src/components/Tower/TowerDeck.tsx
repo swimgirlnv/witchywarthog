@@ -15,7 +15,7 @@ const TowerDeck: React.FC<TowerDeckProps> = ({ towers, onSelectTower }) => {
     <div className="tower-deck">
       {/* <FaceDownCard imageUrl="https://i.imgur.com/CpSDZCN.png" /> */}
       {visibleTowers.map((tower) => (
-        <TowerCard key={tower.id} tower={tower} onSelect={() => onSelectTower(tower.id)} isSelected={false} />
+        <TowerCard key={tower.id} tower={tower} onSelect={() => onSelectTower(tower.id)} selected={false} />
       ))}
     </div>
   );

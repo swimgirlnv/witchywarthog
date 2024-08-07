@@ -13,6 +13,10 @@
     align-items: center;
     position: relative; /* Added for positioning the power icon */
   }
+
+  .spell-card.selected {
+    border: 2px solid #333;
+  }
   
   .spell-card .spell-image {
     width: 100%;

@@ -2,20 +2,17 @@ import React from 'react';
 import './ErrorModal.css';
 
 interface ErrorModalProps {
-  errorMessage: string;
+  message: string;
   onClose: () => void;
 }
 
-const ErrorModal: React.FC<ErrorModalProps> = ({ errorMessage, onClose }) => {
+const ErrorModal: React.FC<ErrorModalProps> = ({ message, onClose }) => {
   return (
-    <div className="error-modal-container">
+    <div className="error-modal-overlay">
       <div className="error-modal">
-        <img src="https://i.imgur.com/yLSnSMS.png" alt="Error character" className="error-character" />
-        <div className="error-content">
-          <h3>Error</h3>
-          <p>{errorMessage}</p>
-          <button onClick={onClose}>Close</button>
-        </div>
+        <button className="close-button" onClick={onClose}>X</button>
+        <img src="https://i.imgur.com/yLSnSMS.png" alt="Error Character" />
+        <p>{message}</p>
       </div>
     </div>
   );

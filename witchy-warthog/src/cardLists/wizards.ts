@@ -17,12 +17,12 @@ const assignRandomPower = (): Power => {
 export const wizardDeck: Wizard[] = [
     { id: 'wizard1', name: 'Witchy Warthog', description: 'A powerful wizard', power: assignRandomPower(), image: 'https://i.imgur.com/0zaAlS0.png' },
     { id: 'wizard2', name: 'Salmon Sorcerer', description: 'A wise wizard', power: assignRandomPower(), image: 'https://i.imgur.com/Vj8FHHb.png' },
-    { id: 'wizard3', name: 'Bear Battlemage', description: 'A fiery wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'wizard4', name: 'Dragon Druid', description: 'A gentle wizard', power: assignRandomPower(), image: 'https://i.imgur.com/w1wEqgi.png' },
-    { id: 'wizard5', name: 'Giraffe Geomancer', description: 'An earthy wizard', power: assignRandomPower(), image: 'https://i.imgur.com/PrIQBeq.png' }, //beginning of placeholders
-    { id: 'wizard6', name: 'Elephant Enchanter', description: 'A magical wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'wizard7', name: 'Kangaroo Kinetist', description: 'A kinetic wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'wizard8', name: 'Lion Luminator', description: 'A radiant wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
+    { id: 'wizard3', name: 'Bear Battlemage', description: 'A fiery wizard', power: assignRandomPower(), image: 'https://i.imgur.com/w1wEqgi.png' },
+    { id: 'wizard4', name: 'Dragon Druid', description: 'A gentle wizard', power: assignRandomPower(), image: 'https://i.imgur.com/PrIQBeq.png' },
+    { id: 'wizard5', name: 'Giraffe Geomancer', description: 'An earthy wizard', power: assignRandomPower(), image: 'https://i.imgur.com/su0yEJo.png' }, //beginning of placeholders
+    { id: 'wizard6', name: 'Elephant Enchanter', description: 'A magical wizard', power: assignRandomPower(), image: 'https://i.imgur.com/Y45fnl6.png' },
+    { id: 'wizard7', name: 'Kangaroo Kinetist', description: 'A kinetic wizard', power: assignRandomPower(), image: 'https://i.imgur.com/8WEfZnN.png' },
+    { id: 'wizard8', name: 'Lion Luminator', description: 'A radiant wizard', power: assignRandomPower(), image: 'https://i.imgur.com/CIYwdPF.png' },
     { id: 'wizard9', name: 'Monkey Mesmerist', description: 'A mesmerizing wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
     { id: 'wizard10', name: 'Narwhal Necromancer', description: 'A spooky wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
     { id: 'wizard11', name: 'Owl Oracle', description: 'A wise wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
