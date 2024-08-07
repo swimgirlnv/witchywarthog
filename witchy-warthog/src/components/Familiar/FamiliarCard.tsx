@@ -15,7 +15,7 @@ const FamiliarCard: React.FC<FamiliarCardProps> = ({ familiar, onSelect, selecte
       <div className="familiar-details">
         <b>{familiar.name}</b>
         <p>{familiar.description}</p>
-        <p>Mana Cost: {familiar.cost}</p>
+        <p>Cost: {familiar.cost} Mana</p>
         <img src={familiar.power.image} alt={familiar.power.name} className="power-icon" />
         <div className="tooltip">{familiar.power.name}</div>
       </div>

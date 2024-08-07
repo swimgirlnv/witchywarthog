@@ -8,15 +8,17 @@ const FamiliarActions: React.FC = () => {
   const [selectedFamiliarId, setSelectedFamiliarId] = useState<string | null>(null);
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
-  const handleSummonFamiliar = () => {
-    if (selectedFamiliarId && selectedAction) {
-      takeTurn('player1', 'summonFamiliar', { familiarId: selectedFamiliarId, action: selectedAction });
+  const handleSummonFamiliar = (action: string) => {
+    if (selectedFamiliarId) {
+      takeTurn('player1', 'summonFamiliar', { familiarId: selectedFamiliarId, action });
       setSelectedFamiliarId(null);
       setSelectedAction(null);
     } else {
-      alert('Please select a familiar and an action.');
+      alert('Please select a familiar.');
     }
   };
+
+  const selectedFamiliar = gameState.familiarsOnOffer.find(f => f.id === selectedFamiliarId);
 
   return (
     <div className="familiar-actions">
@@ -31,13 +33,15 @@ const FamiliarActions: React.FC = () => {
           />
         ))}
       </div>
-      <div className="familiar-actions-buttons">
-        <button onClick={() => setSelectedAction('collectGold')}>Collect Gold</button>
-        <button onClick={() => setSelectedAction('gatherResourcesAndCastSpells')}>Gather Resources and Cast Spells</button>
-        <button onClick={() => setSelectedAction('newResearch')}>New Research</button>
-        <button onClick={() => setSelectedAction('enterDungeon')}>Enter the Dungeon</button>
-      </div>
-      <button onClick={handleSummonFamiliar}>Summon Familiar</button>
+      {selectedFamiliar && (
+        <div className="familiar-action-buttons">
+          <h3>Choose an Action</h3>
+          <button onClick={() => handleSummonFamiliar('collectGold')}>Collect Gold</button>
+          <button onClick={() => handleSummonFamiliar('gatherResourcesAndCastSpells')}>Gather Resources and Cast Spells</button>
+          <button onClick={() => handleSummonFamiliar('newResearch')}>New Research</button>
+          <button onClick={() => handleSummonFamiliar('enterDungeon')}>Enter the Dungeon</button>
+        </div>
+      )}
     </div>
   );
 };

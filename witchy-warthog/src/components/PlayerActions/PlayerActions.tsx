@@ -6,6 +6,7 @@ import WizardCard from '../Wizard/WizardCard';
 import SpellCard from '../Spell/SpellCard';
 import TowerCard from '../Tower/TowerCard';
 import './PlayerActions.css';
+import FamiliarCard from '../Familiar/FamiliarCard';
 import FamiliarActions from '../Familiar/FamiliarAction';
 
 const PlayerActions: React.FC = () => {
@@ -22,6 +23,7 @@ const PlayerActions: React.FC = () => {
   const [biddingActive, setBiddingActive] = useState<boolean>(false);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const [selectedTowerId, setSelectedTowerId] = useState<string | null>(null);
+  const [selectedFamiliarId, setSelectedFamiliarId] = useState<string | null>(null);
 
   const handleResourceSelection = (resource: string) => {
     setSelectedResources(prev =>
@@ -97,6 +99,11 @@ const PlayerActions: React.FC = () => {
     }
   };
 
+  const handleSummonFamiliar = (familiarId: string) => {
+    setSelectedFamiliarId(familiarId);
+    setActionType('summonFamiliar');
+  };
+
   const handleActionSelection = (action: string) => {
     setActionType(action);
     setSelectedCardId(null);
@@ -105,6 +112,7 @@ const PlayerActions: React.FC = () => {
     setQuantityToConvert(0);
     setSelectedSpellId(null);
     setSelectedTowerId(null);
+    setSelectedFamiliarId(null);
   };
 
   return (
@@ -143,7 +151,11 @@ const PlayerActions: React.FC = () => {
           <h2>Convert Resources to Mana</h2>
           <div className="convert-resources">
             {['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'].map(resource => (
-              <button key={resource} onClick={() => setResourceToConvert(resource)}>
+              <button
+                key={resource}
+                onClick={() => setResourceToConvert(resource)}
+                className={resourceToConvert === resource ? 'selected' : ''}
+              >
                 {resource.charAt(0).toUpperCase() + resource.slice(1)}
               </button>
             ))}
@@ -172,16 +184,19 @@ const PlayerActions: React.FC = () => {
                 key={wizard.id}
                 wizard={wizard}
                 onSelect={() => handleRecruitWizard(wizard.id)}
+                isSelected={currentWizard === wizard.id}
               />
             ))}
           </div>
           {biddingActive && (
-            <>
+            <div className="bidding">
               <h3>Current Bid: {currentBid} Mana</h3>
               <h3>Current Player: {gameState.players[currentPlayerIndex].name}</h3>
-              <button onClick={() => handleBid(gameState.players[currentPlayerIndex].id, currentBid + 1)}>Bid {currentBid + 1}</button>
+              <button onClick={() => handleBid(gameState.players[currentPlayerIndex].id, currentBid + 1)}>
+                Bid {currentBid + 1}
+              </button>
               <button onClick={handlePass}>Pass</button>
-            </>
+            </div>
           )}
         </>
       )}
@@ -195,6 +210,7 @@ const PlayerActions: React.FC = () => {
                 key={spell.id}
                 spell={spell}
                 onSelect={() => setSelectedSpellId(spell.id)}
+                isSelected={selectedSpellId === spell.id}
               />
             ))}
           </div>
@@ -211,6 +227,7 @@ const PlayerActions: React.FC = () => {
                 key={tower.id}
                 tower={tower}
                 onSelect={() => setSelectedTowerId(tower.id)}
+                isSelected={selectedTowerId === tower.id}
               />
             ))}
           </div>
@@ -220,7 +237,20 @@ const PlayerActions: React.FC = () => {
 
       {actionType === 'summonFamiliar' && (
         <>
-          <FamiliarActions />
+          <h2>Summon a Familiar</h2>
+          <div className="familiar-cards">
+            {gameState.familiarsOnOffer.map(familiar => (
+              <FamiliarCard
+                key={familiar.id}
+                familiar={familiar}
+                onSelect={() => handleSummonFamiliar(familiar.id)}
+                selected={selectedFamiliarId === familiar.id}
+              />
+            ))}
+          </div>
+          {selectedFamiliarId && (
+            <FamiliarActions />
+          )}
         </>
       )}
     </div>

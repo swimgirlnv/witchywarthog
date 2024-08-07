@@ -16,7 +16,7 @@ const FamiliarDeck: React.FC<FamiliarDeckProps> = ({ familiars, onSelectFamiliar
     <div className="familiar-deck">
       {/* <FaceDownCard imageUrl='https://i.imgur.com/VxxrBB8.png' /> */}
       {visibleFamiliars.map((familiar) => (
-        <FamiliarCard key={familiar.id} familiar={familiar} onSelect={() => onSelectFamiliar(familiar.id)} />
+        <FamiliarCard key={familiar.id} familiar={familiar} onSelect={() => onSelectFamiliar(familiar.id)} selected={false} />
       ))}
     </div>
   );

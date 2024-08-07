@@ -24,7 +24,7 @@ join: http://localhost:5173/join
 
 
 game: http://localhost:5173/game
-![alt text](https://i.imgur.com/woHmyEy.png)
+![alt text](https://i.imgur.com/axZVDBy.jpeg)
 
 
 ## TODOs
