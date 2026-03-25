@@ -1,0 +1,33 @@
+name: Deploy Firebase Functions & Rules
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'witchy-warthog/functions/**'
+      - 'witchy-warthog/firestore.rules'
+      - 'witchy-warthog/firestore.indexes.json'
+      - 'witchy-warthog/firebase.json'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: witchy-warthog/functions/package-lock.json
+      - name: Install functions dependencies
+        run: npm ci
+        working-directory: witchy-warthog/functions
+      - name: Deploy to Firebase
+        run: |
+          echo "$FIREBASE_SA_KEY" > /tmp/sa.json
+          npx firebase-tools@latest deploy --only functions,firestore:rules,firestore:indexes --project witchy-warthog-d2c64
+        working-directory: witchy-warthog
+        env:
+          FIREBASE_SA_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_WITCHY_WARTHOG_D2C64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: /tmp/sa.json

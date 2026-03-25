@@ -52,7 +52,7 @@ const FamiliarCard: React.FC<FamiliarCardProps> = ({ familiar, onSelect, selecte
         </div>
         <div className="card-face card-back">
           <b className="back-name">{familiar.name}</b>
-          <p className="back-desc">{familiar.description}</p>
+          {/* <p className="back-desc">{familiar.description}</p> */}
           {gather.length > 0 && (
             <div className="cast-cost">
               <span className="cast-cost-label">Gathers</span>

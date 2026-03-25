@@ -15,20 +15,44 @@ interface CardAreaProps {
 }
 
 const CardArea: React.FC<CardAreaProps> = ({ title, cards }) => {
+  const previewCards = cards.slice(0, 6);
+  const captionCards = cards.slice(0, 3);
+  const remainingCaptionCount = cards.length - captionCards.length;
+
   return (
     <div className="card-area">
-      <h2>{title}</h2>
-      <div className="cards">
-        {cards.map(card => (
-          <div key={card.id} className="card">
-            <img src={card.image} alt={card.name} className="card-image" />
-            <b>{card.name}</b>
-            <p>{card.description}</p>
-            <p style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-              <img className="card-power-image" src={card.power.image} />{card.power.name}</p>
-          </div>
-        ))}
+      <div className="card-area-header">
+        <h2>{title}</h2>
+        <span className="card-count">{cards.length}</span>
       </div>
+      {cards.length > 0 ? (
+        <>
+          <div className={`card-stack ${cards.length > 4 ? 'dense' : ''}`}>
+            {previewCards.map((card, index) => (
+              <div
+                key={card.id}
+                className="card-stack-item"
+                style={{ '--stack-index': index } as React.CSSProperties}
+                title={`${card.name} • ${card.power.name}${card.description ? ` • ${card.description}` : ''}`}
+              >
+                <img src={card.image} alt={card.name} className="card-image" />
+                <img className="card-power-image" src={card.power.image} alt={card.power.name} />
+              </div>
+            ))}
+            {cards.length > previewCards.length && (
+              <div className="card-stack-more">+{cards.length - previewCards.length}</div>
+            )}
+          </div>
+          <p className="card-area-caption">
+            {captionCards.map(card => card.name).join(', ')}
+            {remainingCaptionCount > 0 ? ` +${remainingCaptionCount} more` : ''}
+          </p>
+        </>
+      ) : (
+        <div className="card-stack empty">
+          <span>No cards yet</span>
+        </div>
+      )}
     </div>
   );
 };

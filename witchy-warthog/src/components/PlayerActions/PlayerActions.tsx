@@ -176,11 +176,11 @@ const PlayerActions: React.FC = () => {
 
   return (
     <div className="player-actions">
-      <div className="turn-status-card">
+      {/* <div className="turn-status-card">
         <span className="status-pill">Reagents {reagentTotal} / {carryLimit}</span>
         <span className="status-pill">Mana {currentPlayer.resources.mana}</span>
         <span className="status-pill">Gold {currentPlayer.resources.gold}</span>
-      </div>
+      </div> */}
 
       {!actionType && (
         <>

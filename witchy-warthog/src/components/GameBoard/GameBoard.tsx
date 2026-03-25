@@ -76,8 +76,9 @@ const calculateVP = (
 };
 
 const GameBoard: React.FC = () => {
-  const { gameState, endTurn, activeRoomCode, isMyTurn } = useGameState();
+  const { gameState, endTurn, activeRoomCode, isMyTurn, viewerPlayerId } = useGameState();
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+  const inactivePlayers = gameState.players.filter(player => player.id !== currentPlayer.id);
 
   if (gameState.gameEnded) {
     const scores = gameState.players.map(p => ({ player: p, vp: calculateVP(p, gameState.players) }))
@@ -124,16 +125,6 @@ const GameBoard: React.FC = () => {
         {isMyTurn && <button className="end-turn-banner-btn" onClick={() => { void endTurn(); }}>End Turn</button>}
       </div>
 
-      {/* Market resource track */}
-      <div className="resource-tracks">
-        <span className="track-label">Market Values (mana per reagent):</span>
-        <ResourceTrack resource="Mandrake" amount={gameState.resources.mandrake} iconUrl="https://i.imgur.com/OBRVBHq.png" />
-        <ResourceTrack resource="Nightshade" amount={gameState.resources.nightshade} iconUrl="https://i.imgur.com/IE7UC04.png" />
-        <ResourceTrack resource="Foxglove" amount={gameState.resources.foxglove} iconUrl="https://i.imgur.com/Wm2Qha4.png" />
-        <ResourceTrack resource="Toadstool" amount={gameState.resources.toadstool} iconUrl="https://i.imgur.com/eQyoGQP.png" />
-        <ResourceTrack resource="Horn" amount={gameState.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
-      </div>
-
       {/* Card market */}
       <div className="card-areas">
 
@@ -173,6 +164,17 @@ const GameBoard: React.FC = () => {
           </div>
         </div>
 
+        <div className="market-track-column">
+          <h3>Market Values</h3>
+          <div className="resource-tracks board-resource-tracks">
+            <ResourceTrack resource="Mandrake" amount={gameState.resources.mandrake} iconUrl="https://i.imgur.com/OBRVBHq.png" />
+            <ResourceTrack resource="Nightshade" amount={gameState.resources.nightshade} iconUrl="https://i.imgur.com/IE7UC04.png" />
+            <ResourceTrack resource="Foxglove" amount={gameState.resources.foxglove} iconUrl="https://i.imgur.com/Wm2Qha4.png" />
+            <ResourceTrack resource="Toadstool" amount={gameState.resources.toadstool} iconUrl="https://i.imgur.com/eQyoGQP.png" />
+            <ResourceTrack resource="Horn" amount={gameState.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
+          </div>
+        </div>
+
         {/* Far right board: achievements */}
         <div className="right-board">
           <div className="achievements">
@@ -182,37 +184,79 @@ const GameBoard: React.FC = () => {
         </div>
       </div>
 
-      {/* Player areas — only active player shown expanded */}
+      {/* Player areas — active player expanded, others compact */}
       <div className="all-player-areas">
-        {gameState.players.map((player, idx) => {
-          const isActive = idx === gameState.currentPlayerIndex;
-          const vp = calculateVP(player, gameState.players);
-          return (
-            <div key={player.id} className={`player-area ${isActive ? 'active-player' : 'inactive-player'}`}>
-              <div className="player-header">
-                <h2>{player.name} {isActive && <span className="your-turn-badge">Your Turn</span>}</h2>
-                <span className="player-vp">{vp} VP</span>
+        {inactivePlayers.length > 0 && (
+          <div className="player-roster">
+            {inactivePlayers.map(player => {
+              const vp = calculateVP(player, gameState.players);
+              const isViewer = player.id === viewerPlayerId;
+              const reagentCount =
+                player.resources.mandrake +
+                player.resources.nightshade +
+                player.resources.foxglove +
+                player.resources.toadstool +
+                player.resources.horn;
+
+              return (
+                <div key={player.id} className={`player-chip ${isViewer ? 'viewer-player' : ''}`}>
+                  <div className="player-chip-header">
+                    <strong>{player.name}</strong>
+                    {isViewer && <span className="player-chip-badge">You</span>}
+                  </div>
+                  <div className="player-chip-stats">
+                    <span>{vp} VP</span>
+                    <span>{player.resources.mana} Mana</span>
+                    <span>{player.resources.gold} Gold</span>
+                    <span>{reagentCount} Reagents</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <div className="player-area active-player">
+          <div className="player-header">
+            <div className="player-heading">
+              <h2>{currentPlayer.name} <span className="your-turn-badge">Active Turn</span></h2>
+            </div>
+            <div className="player-header-resources">
+              <div className="player-resource-group reagent-group">
+                <ResourceTrack resource="Mandrake" amount={currentPlayer.resources.mandrake} iconUrl="https://i.imgur.com/OBRVBHq.png" />
+                <ResourceTrack resource="Nightshade" amount={currentPlayer.resources.nightshade} iconUrl="https://i.imgur.com/IE7UC04.png" />
+                <ResourceTrack resource="Foxglove" amount={currentPlayer.resources.foxglove} iconUrl="https://i.imgur.com/Wm2Qha4.png" />
+                <ResourceTrack resource="Toadstool" amount={currentPlayer.resources.toadstool} iconUrl="https://i.imgur.com/eQyoGQP.png" />
+                <ResourceTrack resource="Horn" amount={currentPlayer.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
               </div>
-              <div className="player-resources">
-                <ResourceTrack resource="Mandrake" amount={player.resources.mandrake} iconUrl="https://i.imgur.com/OBRVBHq.png" />
-                <ResourceTrack resource="Nightshade" amount={player.resources.nightshade} iconUrl="https://i.imgur.com/IE7UC04.png" />
-                <ResourceTrack resource="Foxglove" amount={player.resources.foxglove} iconUrl="https://i.imgur.com/Wm2Qha4.png" />
-                <ResourceTrack resource="Toadstool" amount={player.resources.toadstool} iconUrl="https://i.imgur.com/eQyoGQP.png" />
-                <ResourceTrack resource="Horn" amount={player.resources.horn} iconUrl="https://i.imgur.com/1zn1W9K.png" />
-                <ResourceTrack resource="Gold" amount={player.resources.gold} iconUrl="https://i.imgur.com/plvPmY5.png" />
-                <ResourceTrack resource="Mana" amount={player.resources.mana} iconUrl="https://i.imgur.com/z9Gxixc.png" />
+              <div className="reagent-total">
+                <span className="reagent-total-label">Reagents</span>
+                <strong>
+                  {currentPlayer.resources.mandrake +
+                    currentPlayer.resources.nightshade +
+                    currentPlayer.resources.foxglove +
+                    currentPlayer.resources.toadstool +
+                    currentPlayer.resources.horn}
+                </strong>
               </div>
-              {isActive && <PlayerActions />}
-              <div className="player-cards">
-                <CardArea title="Towers" cards={player.towers} />
-                <CardArea title="Wizards" cards={player.wizards} />
-                <CardArea title="Familiars" cards={player.familiars} />
-                <CardArea title="Spells (Uncast)" cards={player.spells.filter(s => !s.isCast)} />
-                <CardArea title="Spells (Cast)" cards={player.spells.filter(s => s.isCast)} />
+              <div className="player-resource-group reserve-group">
+                <ResourceTrack resource="Gold" amount={currentPlayer.resources.gold} iconUrl="https://i.imgur.com/plvPmY5.png" />
+                <ResourceTrack resource="Mana" amount={currentPlayer.resources.mana} iconUrl="https://i.imgur.com/z9Gxixc.png" />
               </div>
             </div>
-          );
-        })}
+            <span className="player-vp">{calculateVP(currentPlayer, gameState.players)} VP</span>
+          </div>
+          <div className="player-focus-layout">
+            <PlayerActions />
+            <div className="player-cards">
+              <CardArea title="Towers" cards={currentPlayer.towers} />
+              <CardArea title="Wizards" cards={currentPlayer.wizards} />
+              <CardArea title="Familiars" cards={currentPlayer.familiars} />
+              <CardArea title="Spells (Uncast)" cards={currentPlayer.spells.filter(s => !s.isCast)} />
+              <CardArea title="Spells (Cast)" cards={currentPlayer.spells.filter(s => s.isCast)} />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
