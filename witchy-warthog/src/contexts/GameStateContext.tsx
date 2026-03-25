@@ -108,6 +108,9 @@ interface GameState {
   spellDeck: Spell[];
   spellsOnOffer: Spell[];
   dungeonDeck: DungeonCard[];
+  currentPlayerIndex: number;
+  turnNumber: number;
+  gameEnded: boolean;
 }
 
 const generateRandomResources = (): ResourceOptions => {
@@ -131,7 +134,7 @@ const defaultState: GameState = {
     {
       id: 'player1',
       name: 'Player 1',
-      resources: { mandrake: 10, nightshade: 10, foxglove: 10, toadstool: 10, horn: 10, gold: 10, mana: 10 },
+      resources: { mandrake: 0, nightshade: 0, foxglove: 0, toadstool: 0, horn: 0, gold: 0, mana: 20 },
       spells: [],
       wizards: [],
       familiars: [],
@@ -151,6 +154,9 @@ const defaultState: GameState = {
   spellDeck: spellDeck,
   spellsOnOffer: spellsOnOffer,
   dungeonDeck: shuffledDungeonDeck as DungeonCard[],
+  currentPlayerIndex: 0,
+  turnNumber: 1,
+  gameEnded: false,
 };
 
 const GameStateContext = createContext<{
@@ -159,12 +165,14 @@ const GameStateContext = createContext<{
   takeTurn: (playerId: string, action: string, payload: any) => void;
   drawDungeonCard: (playerId: string) => DungeonCard | null;
   endDungeonExpedition: (playerId: string) => void;
+  endTurn: () => void;
 }>({
   gameState: defaultState,
   setGameState: () => {},
   takeTurn: () => {},
   drawDungeonCard: () => null,
   endDungeonExpedition: () => {},
+  endTurn: () => {},
 });
 
 export const useGameState = () => useContext(GameStateContext);
@@ -182,13 +190,21 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
       switch (action) {
         case 'gatherResources':
           if (player.resourceCards.some(card => card.id === payload.cardId)) {
-            player.resources[payload.selectedResources[0]] += 1;
-            player.resources[payload.selectedResources[1]] += 1;
-            player.resources[payload.selectedResources[2]] += 1;
+            const reagentKeys = ['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'] as const;
+            const carryLimit = 10 + player.towers.length;
+            const currentTotal = reagentKeys.reduce((sum, r) => sum + player.resources[r], 0);
+            let added = 0;
+            for (const r of (payload.selectedResources as string[])) {
+              const key = r as keyof Resources;
+              if (reagentKeys.includes(key as typeof reagentKeys[number]) && currentTotal + added < carryLimit) {
+                player.resources[key] += 1;
+                added += 1;
+              }
+            }
           }
           break;
         case 'convertResourcesToMana':
-          player.resources[payload.resource] -= payload.quantity;
+          (player.resources as unknown as Record<string, number>)[payload.resource] -= payload.quantity;
           player.resources.mana += payload.quantity;
           break;
         case 'recruitWizard':
@@ -226,31 +242,29 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
           const familiar = prevState.familiarsOnOffer.find(f => f.id === payload.familiarId);
           if (familiar && player.resources.mana >= familiar.cost) {
             player.resources.mana -= familiar.cost;
+            const res = player.resources as unknown as Record<string, number>;
             switch (payload.action) {
               case 'collectGold':
-                const goldEarned = ['wizards', 'towers', 'spells', 'familiars']
-                  .map(type => player[type].filter(card => card.power.id === familiar.power.id).length)
-                  .reduce((sum, count) => sum + count, 0);
+                const allCards = [...player.wizards, ...player.towers, ...player.spells, ...player.familiars];
+                const goldEarned = allCards.filter(card => card.power.id === familiar.power.id).length;
                 player.resources.gold += goldEarned;
                 break;
               case 'gatherResourcesAndCastSpells':
-                player.resources[familiar.power.id] += 4;
+                res[familiar.power.id] = (res[familiar.power.id] || 0) + 4;
                 player.spells.forEach(spell => {
                   if (!spell.isCast) {
-                    const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+                    const canCast = Object.keys(spell.cost).every(r => res[r] >= spell.cost[r as keyof ResourceOptions]);
                     if (canCast) {
-                      Object.keys(spell.cost).forEach(resource => {
-                        player.resources[resource] -= spell.cost[resource];
-                      });
+                      Object.keys(spell.cost).forEach(r => { res[r] -= spell.cost[r as keyof ResourceOptions]; });
                       spell.isCast = true;
                     }
                   }
                 });
                 break;
               case 'newResearch':
-                const newSpells = spellDeck.splice(0, 4);
-                player.spells.push(...newSpells.map(s => ({ ...s, isCast: false })));
-                gameState.spellsOnOffer.push(...spellDeck.splice(0, 4));
+                const availableSpells = [...prevState.spellDeck];
+                const drawn = availableSpells.splice(0, 1);
+                if (drawn[0]) player.spells.push({ ...drawn[0], isCast: false });
                 break;
               case 'enterDungeon':
                 player.dungeonHits = 0;
@@ -260,17 +274,14 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
                 break;
             }
             player.familiars.push(familiar);
-            newPlayers = newPlayers.map(p => {
-              if (p.id === playerId) return player;
-              return p;
-            });
-            gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiar.id);
-            if (gameState.familiarDeck.length > 0) {
-              const newFamiliar = gameState.familiarDeck.pop();
-              if (newFamiliar) {
-                gameState.familiarsOnOffer.push(newFamiliar);
-              }
+            newPlayers = newPlayers.map(p => (p.id === playerId ? player : p));
+            const newFamiliarsOnOffer = prevState.familiarsOnOffer.filter(f => f.id !== familiar.id);
+            const newFamiliarDeck = [...prevState.familiarDeck];
+            if (newFamiliarDeck.length > 0) {
+              const next = newFamiliarDeck.pop();
+              if (next) newFamiliarsOnOffer.push(next);
             }
+            return { ...prevState, players: newPlayers, familiarsOnOffer: newFamiliarsOnOffer, familiarDeck: newFamiliarDeck };
           }
           break;
         default:
@@ -341,8 +352,17 @@ export const GameStateProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const endTurn = () => {
+    setGameState(prevState => {
+      const nextPlayerIndex = (prevState.currentPlayerIndex + 1) % prevState.players.length;
+      const newTurnNumber = nextPlayerIndex === 0 ? prevState.turnNumber + 1 : prevState.turnNumber;
+      const gameEnded = prevState.wizardDeck.length === 0 && prevState.wizardsOnOffer.length === 0;
+      return { ...prevState, currentPlayerIndex: nextPlayerIndex, turnNumber: newTurnNumber, gameEnded };
+    });
+  };
+
   return (
-    <GameStateContext.Provider value={{ gameState, setGameState, takeTurn, drawDungeonCard, endDungeonExpedition }}>
+    <GameStateContext.Provider value={{ gameState, setGameState, takeTurn, drawDungeonCard, endDungeonExpedition, endTurn }}>
       {children}
     </GameStateContext.Provider>
   );

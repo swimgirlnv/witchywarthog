@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { spellDeck } from './cardLists/spells';
 import { useGameState } from './contexts/GameStateContext';
+
+// Helper to treat Resources as a plain number map for dynamic key access
+const res = (r: object) => r as Record<string, number>;
 
 export const useGameLogic = () => {
   const { gameState, setGameState, drawDungeonCard, endDungeonExpedition } = useGameState();
@@ -8,30 +10,40 @@ export const useGameLogic = () => {
 
   const closeErrorModal = () => setErrorMessage(null);
 
-  const gatherResources = (playerId: string, cardId: string, selectedResources: string[]) => {
+  const gatherResources = (playerId: string, cardId: string) => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
     const resourceCard = player.resourceCards.find(card => card.id === cardId);
     if (!resourceCard) return;
 
-    selectedResources.forEach(resource => {
-      player.resources[resource] += resourceCard.gather[resource];
-    });
+    const reagentKeys = ['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'] as const;
+    const carryLimit = 10 + player.towers.length;
+    const currentTotal = reagentKeys.reduce((sum, r) => sum + player.resources[r], 0);
+    let spaceLeft = carryLimit - currentTotal;
 
-    Object.keys(resourceCard.increase).forEach(resource => {
-      if (resourceCard.increase[resource] > 0) {
-        gameState.resources[resource] += resourceCard.increase[resource];
+    reagentKeys.forEach(resource => {
+      const amount = resourceCard.gather[resource];
+      if (amount > 0 && spaceLeft > 0) {
+        const toAdd = Math.min(amount, spaceLeft);
+        player.resources[resource] += toAdd;
+        spaceLeft -= toAdd;
       }
     });
 
+    // Increase board track values (capped at 10)
+    Object.keys(resourceCard.increase).forEach(resource => {
+      if (resourceCard.increase[resource] > 0) {
+        res(gameState.resources)[resource] = Math.min(10, res(gameState.resources)[resource] + resourceCard.increase[resource]);
+      }
+    });
+
+    // Auto-cast spells if now affordable
     player.spells.forEach(spell => {
       if (!spell.isCast) {
-        const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+        const canCast = Object.keys(spell.cost).every(r => res(player.resources)[r] >= spell.cost[r]);
         if (canCast) {
-          Object.keys(spell.cost).forEach(resource => {
-            player.resources[resource] -= spell.cost[resource];
-          });
+          Object.keys(spell.cost).forEach(r => { res(player.resources)[r] -= spell.cost[r]; });
           spell.isCast = true;
         }
       }
@@ -48,24 +60,17 @@ export const useGameLogic = () => {
     const player = gameState.players.find(p => p.id === playerId);
     if (!player) return;
 
-    const playerResourceAmount = player.resources[resource];
-    if (quantity > playerResourceAmount) {
-      setErrorMessage(`You can only convert up to ${playerResourceAmount} units of ${resource}.`);
+    const playerAmount = res(player.resources)[resource] ?? 0;
+    if (quantity <= 0 || quantity > playerAmount) {
+      setErrorMessage(`You only have ${playerAmount} ${resource} to convert.`);
       return;
     }
 
-    const boardResourceAmount = gameState.resources[resource];
-    if (quantity > boardResourceAmount) {
-      setErrorMessage(`You can only convert up to ${boardResourceAmount} units of ${resource}.`);
-      return;
-    }
-
-    const resourceValue = boardResourceAmount;
-    const manaGained = quantity * resourceValue;
-    player.resources[resource] -= quantity;
+    const trackValue = res(gameState.resources)[resource] ?? 1;
+    const manaGained = quantity * trackValue;
+    res(player.resources)[resource] -= quantity;
     player.resources.mana += manaGained;
-
-    gameState.resources[resource] = Math.max(1, boardResourceAmount - quantity);
+    res(gameState.resources)[resource] = Math.max(1, trackValue - quantity);
 
     setGameState({
       ...gameState,
@@ -92,15 +97,14 @@ export const useGameLogic = () => {
     gameState.wizardsOnOffer = gameState.wizardsOnOffer.filter(w => w.id !== wizardId);
     if (gameState.wizardDeck.length > 0) {
       const newWizard = gameState.wizardDeck.pop();
-      if (newWizard) {
-        gameState.wizardsOnOffer.push(newWizard);
-      }
+      if (newWizard) gameState.wizardsOnOffer.push(newWizard);
     }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       wizardsOnOffer: [...gameState.wizardsOnOffer],
+      wizardDeck: [...gameState.wizardDeck],
     });
   };
 
@@ -122,40 +126,22 @@ export const useGameLogic = () => {
     gameState.spellsOnOffer = gameState.spellsOnOffer.filter(s => s.id !== spellId);
     if (gameState.spellDeck.length > 0) {
       const newSpell = gameState.spellDeck.pop();
-      if (newSpell) {
-        gameState.spellsOnOffer.push(newSpell);
-      }
+      if (newSpell) gameState.spellsOnOffer.push(newSpell);
+    }
+
+    // Immediately try to cast with current resources
+    const researched = player.spells[player.spells.length - 1];
+    const canCast = Object.keys(researched.cost).every(r => res(player.resources)[r] >= researched.cost[r]);
+    if (canCast) {
+      Object.keys(researched.cost).forEach(r => { res(player.resources)[r] -= researched.cost[r]; });
+      researched.isCast = true;
     }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       spellsOnOffer: [...gameState.spellsOnOffer],
-    });
-
-    castSpell(playerId, spellId);
-  };
-
-  const castSpell = (playerId: string, spellId: string) => {
-    const player = gameState.players.find(p => p.id === playerId);
-    if (!player) return;
-
-    const spell = player.spells.find(s => s.id === spellId);
-    if (!spell || spell.isCast) return;
-
-    const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
-    if (canCast) {
-      Object.keys(spell.cost).forEach(resource => {
-        player.resources[resource] -= spell.cost[resource];
-      });
-      spell.isCast = true;
-    } else {
-      setErrorMessage(`You do not have the necessary resources to cast ${spell.name}.`);
-    }
-
-    setGameState({
-      ...gameState,
-      players: gameState.players.map(p => (p.id === playerId ? player : p)),
+      spellDeck: [...gameState.spellDeck],
     });
   };
 
@@ -166,27 +152,25 @@ export const useGameLogic = () => {
     const tower = gameState.towersOnOffer.find(t => t.id === towerId);
     if (!tower) return;
 
-    const towerCost = tower.cost;
-    if (player.resources.gold < towerCost) {
-      setErrorMessage(`You do not have enough gold to create ${tower.name}.`);
+    if (player.resources.gold < tower.cost) {
+      setErrorMessage(`You do not have enough gold to build ${tower.name}. Need ${tower.cost}, have ${player.resources.gold}.`);
       return;
     }
 
-    player.resources.gold -= towerCost;
+    player.resources.gold -= tower.cost;
     player.towers.push(tower);
 
     gameState.towersOnOffer = gameState.towersOnOffer.filter(t => t.id !== towerId);
     if (gameState.towerDeck.length > 0) {
       const newTower = gameState.towerDeck.pop();
-      if (newTower) {
-        gameState.towersOnOffer.push(newTower);
-      }
+      if (newTower) gameState.towersOnOffer.push(newTower);
     }
 
     setGameState({
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       towersOnOffer: [...gameState.towersOnOffer],
+      towerDeck: [...gameState.towerDeck],
     });
   };
 
@@ -208,40 +192,40 @@ export const useGameLogic = () => {
     gameState.familiarsOnOffer = gameState.familiarsOnOffer.filter(f => f.id !== familiarId);
     if (gameState.familiarDeck.length > 0) {
       const newFamiliar = gameState.familiarDeck.pop();
-      if (newFamiliar) {
-        gameState.familiarsOnOffer.push(newFamiliar);
-      }
+      if (newFamiliar) gameState.familiarsOnOffer.push(newFamiliar);
     }
 
     switch (action) {
-      case 'collectGold':
-        const goldEarned = ['wizards', 'towers', 'spells', 'familiars']
-          .map(type => player[type].filter(card => card.power.id === familiar.power.id).length)
-          .reduce((sum, count) => sum + count, 0);
+      case 'collectGold': {
+        const allCards = [...player.wizards, ...player.towers, ...player.spells, ...player.familiars];
+        const goldEarned = allCards.filter(card => card.power.id === familiar.power.id).length;
         player.resources.gold += goldEarned;
         break;
-      case 'gatherResourcesAndCastSpells':
-        player.resources[familiar.power.id] += 4;
+      }
+      case 'gatherResourcesAndCastSpells': {
+        // Familiar's school gives 4 of the matching reagent (if it is a reagent)
+        const reagentKeys = ['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'];
+        if (reagentKeys.includes(familiar.power.id)) {
+          res(player.resources)[familiar.power.id] = (res(player.resources)[familiar.power.id] || 0) + 4;
+        }
         player.spells.forEach(spell => {
           if (!spell.isCast) {
-            const canCast = Object.keys(spell.cost).every(resource => player.resources[resource] >= spell.cost[resource]);
+            const canCast = Object.keys(spell.cost).every(r => res(player.resources)[r] >= spell.cost[r]);
             if (canCast) {
-              Object.keys(spell.cost).forEach(resource => {
-                player.resources[resource] -= spell.cost[resource];
-              });
+              Object.keys(spell.cost).forEach(r => { res(player.resources)[r] -= spell.cost[r]; });
               spell.isCast = true;
             }
           }
         });
         break;
-      case 'newResearch':
-        gameState.spellsOnOffer = spellDeck.splice(0, 4);
-        const newSpell = gameState.spellsOnOffer.pop();
-        if (newSpell) {
-          player.spells.push({ ...newSpell, isCast: false });
-          gameState.spellsOnOffer.push(...spellDeck.splice(0, 1));
+      }
+      case 'newResearch': {
+        if (gameState.spellDeck.length > 0) {
+          const newSpell = gameState.spellDeck.pop();
+          if (newSpell) player.spells.push({ ...newSpell, isCast: false });
         }
         break;
+      }
       case 'enterDungeon':
         player.dungeonHits = 0;
         player.dungeonTreasures = [];
@@ -254,13 +238,14 @@ export const useGameLogic = () => {
       ...gameState,
       players: gameState.players.map(p => (p.id === playerId ? player : p)),
       familiarsOnOffer: [...gameState.familiarsOnOffer],
+      familiarDeck: [...gameState.familiarDeck],
     });
   };
 
   const takeTurn = (playerId: string, action: string, payload?: any) => {
     switch (action) {
       case 'gatherResources':
-        gatherResources(playerId, payload.cardId, payload.selectedResources);
+        gatherResources(playerId, payload.cardId);
         break;
       case 'convertResourcesToMana':
         convertResourcesToMana(playerId, payload.resource, payload.quantity);

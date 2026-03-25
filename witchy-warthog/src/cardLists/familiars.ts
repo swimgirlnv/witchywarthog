@@ -50,7 +50,7 @@ const assignRandomCost = (): number => {
     };
 
 
-export const familiarDeck: Familiar[] = Array.from({ length: 25 }, (_, index) => {
+const allFamiliars: Familiar[] = Array.from({ length: 25 }, (_, index) => {
     const id = `familiar${index + 1}`;
     const power = assignRandomPower();
     return {
@@ -62,6 +62,7 @@ export const familiarDeck: Familiar[] = Array.from({ length: 25 }, (_, index) =>
       image: powerImages[power.name],
     };
   });
-  
-  export const familiarsOnOffer: Familiar[] = familiarDeck.slice(0, 2);
+
+export const familiarsOnOffer: Familiar[] = allFamiliars.slice(0, 4);
+export const familiarDeck: Familiar[] = allFamiliars.slice(4);
   

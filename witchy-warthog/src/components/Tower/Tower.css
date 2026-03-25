@@ -1,77 +1,38 @@
-
-/* Tower Card Styles */
+/* ── Tower Card ── */
 .tower-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 150px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(240, 239, 234);
-    align-items: center;
-    position: relative;
-  }
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  width: 144px;
+  aspect-ratio: 2 / 3;
+  cursor: pointer;
+  position: relative;
+  perspective: 700px;
+  transition: box-shadow 0.15s;
+}
 
-  .tower-card.selected {
-    border: 2px solid #333;
-  }
-  
-  .tower-card .tower-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .tower-card .wizard-details {
-    text-align: center;
-  }
-  
-  .tower-card .wizard-details h3 {
-    margin: 10px 0 5px;
-  }
-  
-  .tower-card .wizard-details p {
-    margin: 5px 0;
-  }
-  
-  .tower-deck {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+.tower-card:hover {
+  box-shadow: 0 0 0 2px #3a5fa8;
+}
 
-  /* Power Icon Styles */
-  .power-icon {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-  }
+.tower-card.selected {
+  box-shadow: 0 0 0 3px #f0c040;
+}
 
-  /* Tooltip styling */
-.tooltip {
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-  }
-  
-  .tower-card:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
+.tower-card .card-front {
+  background-image: linear-gradient(160deg, #eef0f8, #c8cfe0);
+}
+
+.tower-image {
+  width: 100%;
+  flex: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.tower-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}

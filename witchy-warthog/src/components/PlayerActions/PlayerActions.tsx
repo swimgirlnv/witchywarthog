@@ -10,209 +10,241 @@ import './PlayerActions.css';
 import FamiliarActions from '../Familiar/FamiliarAction';
 import ErrorModal from '../ErrorModal/ErrorModal';
 
+const REAGENTS = ['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'] as const;
+const REAGENT_LABELS: Record<string, string> = {
+  mandrake: 'Mandrake', nightshade: 'Nightshade', foxglove: 'Foxglove',
+  toadstool: 'Toadstool', horn: 'Horn',
+};
+
 const PlayerActions: React.FC = () => {
   const { takeTurn, errorMessage, closeErrorModal } = useGameLogic();
-  const { gameState } = useGameState();
-  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
-  const [selectedResources, setSelectedResources] = useState<string[]>([]);
+  const { gameState, endTurn } = useGameState();
+  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+
   const [actionType, setActionType] = useState<string | null>(null);
+  const [actionDone, setActionDone] = useState(false);
+
+  // Gather
+  const [selectedCardId, setSelectedCardId] = useState<string | null>(null);
+
+  // Convert
   const [resourceToConvert, setResourceToConvert] = useState<string | null>(null);
-  const [quantityToConvert, setQuantityToConvert] = useState<number>(0);
+  const [quantityToConvert, setQuantityToConvert] = useState<number>(1);
+
+  // Recruit wizard
+  const [currentWizardId, setCurrentWizardId] = useState<string | null>(null);
   const [currentBid, setCurrentBid] = useState<number>(0);
-  const [currentWizard, setCurrentWizard] = useState<string | null>(null);
-  const [currentPlayerIndex, setCurrentPlayerIndex] = useState<number>(0);
   const [biddingActive, setBiddingActive] = useState<boolean>(false);
+
+  // Research / tower
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const [selectedTowerId, setSelectedTowerId] = useState<string | null>(null);
   const [selectedFamiliarId, setSelectedFamiliarId] = useState<string | null>(null);
-  const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(null);
 
-  const handleResourceSelection = (resource: string) => {
-    setSelectedResources(prev =>
-      prev.includes(resource) ? prev.filter(r => r !== resource) : prev.length < 3 ? [...prev, resource] : prev
-    );
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  const reset = () => {
+    setActionType(null); setActionDone(false);
+    setSelectedCardId(null); setResourceToConvert(null); setQuantityToConvert(1);
+    setCurrentWizardId(null); setCurrentBid(0); setBiddingActive(false);
+    setSelectedSpellId(null); setSelectedTowerId(null); setSelectedFamiliarId(null);
   };
 
-  const handleGatherResources = () => {
-    if (selectedCardId && selectedResources.length === 3) {
-      takeTurn('player1', 'gatherResources', { cardId: selectedCardId, selectedResources });
-      setSelectedCardId(null);
-      setSelectedResources([]);
-      setActionType(null);
-    } else {
-      setLocalErrorMessage('Please select a card and exactly 3 resources.');
-    }
+  const handleSelectAction = (action: string) => { reset(); setActionType(action); };
+
+  const completeAction = () => setActionDone(true);
+
+  // --- Gather ---
+  const handleGather = (cardId: string) => {
+    takeTurn(currentPlayer.id, 'gatherResources', { cardId });
+    completeAction();
   };
 
-  const handleConvertResources = () => {
-    if (resourceToConvert && quantityToConvert > 0) {
-      takeTurn('player1', 'convertResourcesToMana', { resource: resourceToConvert, quantity: quantityToConvert });
-      setResourceToConvert(null);
-      setQuantityToConvert(0);
-      setActionType(null);
-    } else {
-      setLocalErrorMessage('Please select a resource and a valid quantity to convert.');
-    }
+  // --- Convert ---
+  const trackValue = resourceToConvert ? (gameState.resources as unknown as Record<string, number>)[resourceToConvert] ?? 1 : 0;
+  const manaPreview = quantityToConvert * trackValue;
+
+  const handleConvert = () => {
+    if (!resourceToConvert || quantityToConvert < 1) { setLocalError('Select a reagent and quantity.'); return; }
+    const have = (currentPlayer.resources as unknown as Record<string, number>)[resourceToConvert] ?? 0;
+    if (quantityToConvert > have) { setLocalError(`You only have ${have} ${REAGENT_LABELS[resourceToConvert]}.`); return; }
+    takeTurn(currentPlayer.id, 'convertResourcesToMana', { resource: resourceToConvert, quantity: quantityToConvert });
+    completeAction();
   };
 
-  const handleRecruitWizard = (wizardId: string) => {
-    setCurrentWizard(wizardId);
-    setBiddingActive(true);
-    setCurrentPlayerIndex(0);
-    setCurrentBid(0);
+  // --- Recruit wizard ---
+  const handleSelectWizard = (wizardId: string) => {
+    setCurrentWizardId(wizardId); setCurrentBid(0); setBiddingActive(true);
+  };
+  const handleBid = () => {
+    const newBid = currentBid + 1;
+    if (currentPlayer.resources.mana < newBid) { setLocalError('Not enough mana to bid.'); return; }
+    setCurrentBid(newBid);
+  };
+  const handleConfirmRecruit = () => {
+    if (!currentWizardId) { setLocalError('Select a wizard first.'); return; }
+    if (currentBid === 0) { setLocalError('You must bid at least 1 mana.'); return; }
+    takeTurn(currentPlayer.id, 'recruitWizard', { wizardId: currentWizardId, bidAmount: currentBid });
+    completeAction();
   };
 
-  const handleBid = (playerId: string, bidAmount: number) => {
-    if (gameState.players[currentPlayerIndex].resources.mana < bidAmount) {
-      setLocalErrorMessage('You do not have enough mana to place this bid.');
-      return;
-    }
-    setCurrentBid(bidAmount);
-    setCurrentPlayerIndex((currentPlayerIndex + 1) % gameState.players.length);
-  };
-
-  const handlePass = () => {
-    if (currentPlayerIndex === 0) {
-      takeTurn('player1', 'recruitWizard', { wizardId: currentWizard, bidAmount: currentBid });
-      setBiddingActive(false);
-      setActionType(null);
-    } else {
-      setCurrentPlayerIndex((currentPlayerIndex + 1) % gameState.players.length);
-    }
-  };
-
+  // --- Research spell ---
   const handleResearchSpell = () => {
-    if (selectedSpellId) {
-      takeTurn('player1', 'researchSpell', { spellId: selectedSpellId });
-      setSelectedSpellId(null);
-      setActionType(null);
-    } else {
-      setLocalErrorMessage('Please select a spell to research.');
+    if (!selectedSpellId) { setLocalError('Select a spell first.'); return; }
+    const spell = gameState.spellsOnOffer.find(s => s.id === selectedSpellId);
+    if (spell && currentPlayer.resources.mana < spell.manaCost) {
+      setLocalError(`Need ${spell.manaCost} mana. You have ${currentPlayer.resources.mana}.`); return;
     }
+    takeTurn(currentPlayer.id, 'researchSpell', { spellId: selectedSpellId });
+    completeAction();
   };
 
+  // --- Create tower ---
   const handleCreateTower = () => {
-    if (selectedTowerId) {
-      takeTurn('player1', 'createTower', { towerId: selectedTowerId });
-      setSelectedTowerId(null);
-      setActionType(null);
-    } else {
-      setLocalErrorMessage('Please select a tower to create.');
-    }
+    if (!selectedTowerId) { setLocalError('Select a tower first.'); return; }
+    takeTurn(currentPlayer.id, 'createTower', { towerId: selectedTowerId });
+    completeAction();
   };
 
-  const handleSummonFamiliar = (familiarId: string) => {
-    setSelectedFamiliarId(familiarId);
-    setActionType('summonFamiliar');
-  };
+  // --- Summon familiar ---
+  const handleFamiliarActionComplete = () => completeAction();
 
-  const handleFamiliarActionComplete = () => {
-    setActionType(null);
-    setSelectedFamiliarId(null);
-  };
+  const carryLimit = 10 + currentPlayer.towers.length;
+  const reagentTotal = REAGENTS.reduce((s, r) => s + currentPlayer.resources[r], 0);
 
-  const handleActionSelection = (action: string) => {
-    setActionType(action);
-    setSelectedCardId(null);
-    setSelectedResources([]);
-    setResourceToConvert(null);
-    setQuantityToConvert(0);
-    setSelectedSpellId(null);
-    setSelectedTowerId(null);
-    setSelectedFamiliarId(null);
-  };
-
-  const closeLocalErrorModal = () => setLocalErrorMessage(null);
+  if (actionDone) {
+    return (
+      <div className="player-actions action-done">
+        <p className="action-done-msg">Action complete!</p>
+        <button className="end-turn-btn" onClick={() => { reset(); endTurn(); }}>End Turn</button>
+      </div>
+    );
+  }
 
   return (
     <div className="player-actions">
-      <h2>Choose an Action</h2>
-      <div className="action-buttons">
-        <button onClick={() => handleActionSelection('gatherResources')}>Gather Resources</button>
-        <button onClick={() => handleActionSelection('convertResourcesToMana')}>Convert Resources to Mana</button>
-        <button onClick={() => handleActionSelection('recruitWizard')}>Recruit Wizard</button>
-        <button onClick={() => handleActionSelection('researchSpell')}>Research Spell</button>
-        <button onClick={() => handleActionSelection('createTower')}>Create Tower</button>
-        <button onClick={() => handleActionSelection('summonFamiliar')}>Summon Familiar</button>
+      <div className="carry-limit">
+        Reagents: {reagentTotal} / {carryLimit}
       </div>
 
-      {actionType === 'gatherResources' && (
+      {!actionType && (
         <>
-          <h2>Choose a Resource Card</h2>
+          <h3>Choose an Action</h3>
+          <div className="action-buttons">
+            <button onClick={() => handleSelectAction('gatherResources')}>Gather</button>
+            <button onClick={() => handleSelectAction('convertResourcesToMana')}>Convert</button>
+            <button onClick={() => handleSelectAction('recruitWizard')}>Recruit Wizard</button>
+            <button onClick={() => handleSelectAction('researchSpell')}>Research Spell</button>
+            <button onClick={() => handleSelectAction('createTower')}>Build Tower</button>
+            <button onClick={() => handleSelectAction('summonFamiliar')}>Summon Familiar</button>
+          </div>
+        </>
+      )}
+
+      {actionType === 'gatherResources' && (
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Gather Reagents</h3>
+          </div>
+          <p className="action-hint">Click a card to gather all its reagents automatically.</p>
           <div className="resource-cards">
-            {gameState.players[0].resourceCards.map(card => (
-              <ResourceCard
-                key={card.id}
-                card={card}
-                selected={selectedCardId === card.id}
-                onSelect={() => setSelectedCardId(card.id)}
-                selectedResources={selectedCardId === card.id ? selectedResources : []}
-                onResourceSelect={handleResourceSelection}
-              />
+            {currentPlayer.resourceCards.map(card => (
+              <div key={card.id} className="gather-card-wrapper" onClick={() => handleGather(card.id)}>
+                <ResourceCard
+                  card={card}
+                  selected={selectedCardId === card.id}
+                  onSelect={() => {}}
+                  selectedResources={[]}
+                  onResourceSelect={() => {}}
+                />
+              </div>
             ))}
           </div>
-          <button onClick={handleGatherResources}>Gather Resources</button>
-        </>
+        </div>
       )}
 
       {actionType === 'convertResourcesToMana' && (
-        <>
-          <h2>Convert Resources to Mana</h2>
-          <div className="convert-resources">
-            {['mandrake', 'nightshade', 'foxglove', 'toadstool', 'horn'].map(resource => (
-              <button
-                key={resource}
-                onClick={() => setResourceToConvert(resource)}
-                className={resourceToConvert === resource ? 'selected' : ''}
-              >
-                {resource.charAt(0).toUpperCase() + resource.slice(1)}
-              </button>
-            ))}
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Convert Reagents to Mana</h3>
+          </div>
+          <p className="action-hint">
+            Each reagent converts at its current track value. Track value drops after converting.
+          </p>
+          <div className="convert-grid">
+            {REAGENTS.map(r => {
+              const have = currentPlayer.resources[r];
+              const tv = (gameState.resources as unknown as Record<string, number>)[r] ?? 1;
+              return (
+                <button
+                  key={r}
+                  className={`convert-btn ${resourceToConvert === r ? 'selected' : ''} ${have === 0 ? 'disabled' : ''}`}
+                  onClick={() => { if (have > 0) { setResourceToConvert(r); setQuantityToConvert(1); } }}
+                  disabled={have === 0}
+                >
+                  <span className="convert-btn-name">{REAGENT_LABELS[r]}</span>
+                  <span className="convert-btn-have">Have: {have}</span>
+                  <span className="convert-btn-rate">Rate: {tv} mana ea.</span>
+                </button>
+              );
+            })}
           </div>
           {resourceToConvert && (
-            <>
-              <h3>Enter Quantity to Convert</h3>
+            <div className="convert-qty-row">
+              <label>Quantity:</label>
               <input
                 type="number"
                 value={quantityToConvert}
-                onChange={(e) => setQuantityToConvert(Number(e.target.value))}
-                min="1"
+                min={1}
+                max={(currentPlayer.resources as unknown as Record<string, number>)[resourceToConvert] ?? 1}
+                onChange={e => setQuantityToConvert(Math.max(1, Number(e.target.value)))}
               />
-              <button onClick={handleConvertResources}>Convert</button>
-            </>
+              <span className="mana-preview">= {manaPreview} mana</span>
+              <button onClick={handleConvert}>Convert</button>
+            </div>
           )}
-        </>
+        </div>
       )}
 
       {actionType === 'recruitWizard' && (
-        <>
-          <h2>Recruit a Wizard</h2>
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Recruit a Wizard</h3>
+          </div>
+          <p className="action-hint">Select a wizard, bid mana, then confirm. (You have {currentPlayer.resources.mana} mana)</p>
           <div className="wizards-on-offer">
             {gameState.wizardsOnOffer.map(wizard => (
               <WizardCard
                 key={wizard.id}
                 wizard={wizard}
-                onSelect={() => handleRecruitWizard(wizard.id)}
-                selected={currentWizard === wizard.id}
+                onSelect={() => handleSelectWizard(wizard.id)}
+                selected={currentWizardId === wizard.id}
               />
             ))}
           </div>
           {biddingActive && (
-            <div className="bidding">
-              <h3>Current Bid: {currentBid} Mana</h3>
-              <h3>Current Player: {gameState.players[currentPlayerIndex].name}</h3>
-              <button onClick={() => handleBid(gameState.players[currentPlayerIndex].id, currentBid + 1)}>
-                Bid {currentBid + 1}
-              </button>
-              <button onClick={handlePass}>Pass</button>
+            <div className="bidding-panel">
+              <p>Bidding for: <b>{gameState.wizardsOnOffer.find(w => w.id === currentWizardId)?.name}</b></p>
+              <p>Current bid: <b>{currentBid} mana</b></p>
+              <div className="bid-controls">
+                <button onClick={handleBid}>Raise bid to {currentBid + 1}</button>
+                <button onClick={handleConfirmRecruit} disabled={currentBid === 0}>Confirm ({currentBid} mana)</button>
+              </div>
             </div>
           )}
-        </>
+        </div>
       )}
 
       {actionType === 'researchSpell' && (
-        <>
-          <h2>Research a Spell</h2>
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Research a Spell</h3>
+          </div>
+          <p className="action-hint">Pay the mana cost to add the spell to your hand. (You have {currentPlayer.resources.mana} mana)</p>
           <div className="spells-on-offer">
             {gameState.spellsOnOffer.map(spell => (
               <SpellCard
@@ -223,13 +255,19 @@ const PlayerActions: React.FC = () => {
               />
             ))}
           </div>
-          <button onClick={handleResearchSpell}>Research Spell</button>
-        </>
+          {selectedSpellId && (
+            <button className="confirm-btn" onClick={handleResearchSpell}>Research Selected Spell</button>
+          )}
+        </div>
       )}
 
       {actionType === 'createTower' && (
-        <>
-          <h2>Create a Tower</h2>
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Build a Tower</h3>
+          </div>
+          <p className="action-hint">Pay gold to build. Towers increase your reagent carry limit. (You have {currentPlayer.resources.gold} gold)</p>
           <div className="towers-on-offer">
             {gameState.towersOnOffer.map(tower => (
               <TowerCard
@@ -240,19 +278,25 @@ const PlayerActions: React.FC = () => {
               />
             ))}
           </div>
-          <button onClick={handleCreateTower}>Create Tower</button>
-        </>
+          {selectedTowerId && (
+            <button className="confirm-btn" onClick={handleCreateTower}>Build Selected Tower</button>
+          )}
+        </div>
       )}
 
       {actionType === 'summonFamiliar' && (
-        <>
-          <h2>Summon a Familiar</h2>
+        <div className="action-panel">
+          <div className="action-panel-header">
+            <button className="back-btn" onClick={reset}>← Back</button>
+            <h3>Summon a Familiar</h3>
+          </div>
+          <p className="action-hint">Pay the mana cost to summon. Each familiar grants a special action. (You have {currentPlayer.resources.mana} mana)</p>
           <div className="familiar-cards">
             {gameState.familiarsOnOffer.map(familiar => (
               <FamiliarCard
                 key={familiar.id}
                 familiar={familiar}
-                onSelect={() => handleSummonFamiliar(familiar.id)}
+                onSelect={() => setSelectedFamiliarId(familiar.id)}
                 selected={selectedFamiliarId === familiar.id}
               />
             ))}
@@ -260,15 +304,11 @@ const PlayerActions: React.FC = () => {
           {selectedFamiliarId && (
             <FamiliarActions familiarId={selectedFamiliarId} onComplete={handleFamiliarActionComplete} />
           )}
-        </>
+        </div>
       )}
 
-      {errorMessage && (
-        <ErrorModal message={errorMessage} onClose={closeErrorModal} />
-      )}
-      {localErrorMessage && (
-        <ErrorModal message={localErrorMessage} onClose={closeLocalErrorModal} />
-      )}
+      {errorMessage && <ErrorModal message={errorMessage} onClose={closeErrorModal} />}
+      {localError && <ErrorModal message={localError} onClose={() => setLocalError(null)} />}
     </div>
   );
 };

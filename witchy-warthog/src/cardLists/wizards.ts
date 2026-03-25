@@ -14,12 +14,12 @@ const assignRandomPower = (): Power => {
     return powers[Math.floor(Math.random() * powers.length)];
 };
 
-export const wizardDeck: Wizard[] = [
+const allWizards: Wizard[] = [
     { id: 'wizard1', name: 'Witchy Warthog', description: 'A powerful wizard', power: assignRandomPower(), image: 'https://i.imgur.com/0zaAlS0.png' },
     { id: 'wizard2', name: 'Salmon Sorcerer', description: 'A wise wizard', power: assignRandomPower(), image: 'https://i.imgur.com/Vj8FHHb.png' },
     { id: 'wizard3', name: 'Bear Battlemage', description: 'A fiery wizard', power: assignRandomPower(), image: 'https://i.imgur.com/w1wEqgi.png' },
     { id: 'wizard4', name: 'Dragon Druid', description: 'A gentle wizard', power: assignRandomPower(), image: 'https://i.imgur.com/PrIQBeq.png' },
-    { id: 'wizard5', name: 'Giraffe Geomancer', description: 'An earthy wizard', power: assignRandomPower(), image: 'https://i.imgur.com/su0yEJo.png' }, //beginning of placeholders
+    { id: 'wizard5', name: 'Giraffe Geomancer', description: 'An earthy wizard', power: assignRandomPower(), image: 'https://i.imgur.com/su0yEJo.png' },
     { id: 'wizard6', name: 'Elephant Enchanter', description: 'A magical wizard', power: assignRandomPower(), image: 'https://i.imgur.com/Y45fnl6.png' },
     { id: 'wizard7', name: 'Kangaroo Kinetist', description: 'A kinetic wizard', power: assignRandomPower(), image: 'https://i.imgur.com/8WEfZnN.png' },
     { id: 'wizard8', name: 'Lion Luminator', description: 'A radiant wizard', power: assignRandomPower(), image: 'https://i.imgur.com/CIYwdPF.png' },
@@ -36,11 +36,8 @@ export const wizardDeck: Wizard[] = [
     { id: 'wizard19', name: 'Walrus Warlock', description: 'A warlike wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
     { id: 'wizard20', name: 'Xerus Xenomancer', description: 'An alien wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
     { id: 'wizard21', name: 'Yak Yeller', description: 'A loud wizard', power: assignRandomPower(), image: 'https://i.imgur.com/1zn1W9K.png' },
-    { id: 'wizard22', name: 'Zebra Zapper', description: 'A zapping wizard', power: assignRandomPower(), image: 'https://i.imgur.com/8jQbB9X.png' }, // this one is done
-    // Add more wizards as needed
+    { id: 'wizard22', name: 'Zebra Zapper', description: 'A zapping wizard', power: assignRandomPower(), image: 'https://i.imgur.com/8jQbB9X.png' },
   ];
 
-export const wizardsOnOffer: Wizard[] = [
-  { id: 'wizard1', name: 'Witchy Warthog', description: 'A powerful wizard', power: assignRandomPower(), image: 'https://i.imgur.com/0zaAlS0.png' },
-  { id: 'wizard2', name: 'Salmon Sorcerer', description: 'A wise wizard', power: assignRandomPower(), image: 'https://i.imgur.com/Vj8FHHb.png' },
-];
+export const wizardsOnOffer: Wizard[] = allWizards.slice(0, 4);
+export const wizardDeck: Wizard[] = allWizards.slice(4);

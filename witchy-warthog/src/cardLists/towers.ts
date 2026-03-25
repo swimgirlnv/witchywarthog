@@ -19,12 +19,12 @@ const assignRandomCost = (): number => {
     return cost;;
 }
 
-export const towerDeck: Tower[] = [
+const allTowers: Tower[] = [
     { id: 'tower1', name: 'Crimson Bastion', description: 'A crimson fortress imbued with fire magic', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/jwUmGqI.png' },
     { id: 'tower2', name: 'Azure Keep', description: 'A lair of mystical blue energy', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/2TPro9X.png' },
     { id: 'tower3', name: 'Golden Spire', description: 'A towering golden structure of light', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/716fASE.png' },
     { id: 'tower4', name: 'Emerald Citadel', description: 'A citadel harnessing the power of nature', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/fVHcF7U.png' },
-    { id: 'tower5', name: 'Violet Stronghold', description: 'A stronghold emanating violet arcane energy', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/VokYaB0.png' }, //beginning of placeholders
+    { id: 'tower5', name: 'Violet Stronghold', description: 'A stronghold emanating violet arcane energy', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/VokYaB0.png' },
     { id: 'tower6', name: 'Amber Tower', description: 'A tower of amber that glows with ancient power', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/KfWv6k1.png' },
     { id: 'tower7', name: 'Ivory Fortress', description: 'A pristine fortress of pure ivory', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/CQt33dE.png' },
     { id: 'tower8', name: 'Obsidian Keep', description: 'A dark keep made of black obsidian', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/tUCZniM.png' },
@@ -42,9 +42,7 @@ export const towerDeck: Tower[] = [
     { id: 'tower20', name: 'Horn Keep', description: 'A keep adorned with mystical horns', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/e8YnaXW.png' },
     { id: 'tower21', name: 'Iron Spire', description: 'A spire forged from the strongest iron', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/SQ9FYHa.png' },
     { id: 'tower22', name: 'Jade Citadel', description: 'A citadel made from green jade stone', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/2rE1G5j.png' },
-    // Add more towers as needed
 ];
 
-export const towersOnOffer: Tower[] = [
-    { id: 'tower1', name: 'Crimson Bastion', description: 'A crimson fortress imbued with fire magic', power: assignRandomPower(), cost: assignRandomCost(), image: 'https://i.imgur.com/jwUmGqI.png' },
-];
+export const towersOnOffer: Tower[] = allTowers.slice(0, 4);
+export const towerDeck: Tower[] = allTowers.slice(4);

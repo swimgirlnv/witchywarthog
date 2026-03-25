@@ -38,28 +38,23 @@ const generateRandomManaCost = (): number => {
     return Math.floor(Math.random() * 5) + 1; // Mana cost between 1 and 5
 };
 
-export const spellDeck: Spell[] = [
+const allSpells: Spell[] = [
     { id: 'spell1', name: 'Valorem Incremento', description: 'Tower Cards = +1 VP', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
     { id: 'spell2', name: 'Non Mortui', description: '+3 VP / Necromancer Wizard and Familiar Cards owned', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
     { id: 'spell3', name: 'Impostoro', description: 'Gain 1 Gold / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
     { id: 'spell4', name: 'Magicis Divitiis', description: '+1 VP / 10 Mana at the end of the game', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell5', name: 'Aqua Vitae', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell6', name: 'Aurum Potestas', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell7', name: 'Caelum Cognitio', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell8', name: 'Fulguris', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell9', name: 'Gelum', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell10', name: 'Ignis', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell11', name: 'Lux', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell12', name: 'Mors', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell13', name: 'Nubes', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell14', name: 'Oceani', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell15', name: 'Pax', description: 'Gain 1 VP / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    // Add more spells as needed
+    { id: 'spell5', name: 'Aqua Vitae', description: '+1 VP / Conjuring card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell6', name: 'Aurum Potestas', description: '+1 VP / Alchemy card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell7', name: 'Caelum Cognitio', description: '+1 VP / Sorcery card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell8', name: 'Fulguris', description: '+1 VP / Enchantment card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell9', name: 'Gelum', description: '+1 VP / Druidry card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell10', name: 'Ignis', description: '+1 VP / Thaumaturgy card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell11', name: 'Lux', description: '+2 VP / Familiar card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell12', name: 'Mors', description: '+2 VP / Wizard card you own', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell13', name: 'Nubes', description: '+1 VP / 5 Gold you have at game end', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell14', name: 'Oceani', description: '+3 VP if you have the most Towers', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
+    { id: 'spell15', name: 'Pax', description: '+3 VP if you have the most Wizards', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
 ];
 
-export const spellsOnOffer: Spell[] = [
-    { id: 'spell1', name: 'Valorem Incremento', description: 'Tower Cards = +1 VP', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell2', name: 'Non Mortui', description: '+3 VP / Necromancer Wizard and Familiar Cards owned', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell3', name: 'Impostoro', description: 'Gain 1 Gold / Card of a School of Magic of your choice', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-    { id: 'spell4', name: 'Magicis Divitiis', description: '+1 VP / 10 Mana at the end of the game', isCast: false, manaCost: generateRandomManaCost(), cost: generateRandomResources(), power: assignRandomPower(), image: 'https://i.imgur.com/XifSj3R.png' },
-];
+export const spellsOnOffer: Spell[] = allSpells.slice(0, 4);
+export const spellDeck: Spell[] = allSpells.slice(4);

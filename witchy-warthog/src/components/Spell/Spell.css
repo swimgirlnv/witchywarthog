@@ -1,104 +1,49 @@
-/* Spell Card Styles */
+/* ── Spell Card ── */
 .spell-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 100px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(196,174,190);
-    align-items: center;
-    position: relative; /* Added for positioning the power icon */
-  }
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  width: 144px;
+  aspect-ratio: 2 / 3;
+  cursor: pointer;
+  position: relative;
+  perspective: 700px;
+  transition: box-shadow 0.15s;
+}
 
-  .spell-card.selected {
-    border: 2px solid #333;
-  }
-  
-  .spell-card .spell-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .spell-card .spell-details {
-    text-align: center;
-  }
-  
-  .spell-card .spell-details h3 {
-    margin: 10px 0 5px;
-  }
-  
-  .spell-card .spell-details p {
-    margin: 5px 0;
-  }
-  
-  .spell-deck {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  
-  .spell-details {
-    text-align: center;
-  }
-  
-  .spell-cost {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 10px;
-  }
-  
-  .resource-cost {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-right: 5px;
-  }
-  
-  .resource-icon {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-  }
-  
-  /* Power Icon Styles */
-  .power-icon {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-  }
-  
-  /* Tooltip styling */
-  .tooltip {
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
-    z-index: 1;
-  }
-  
-  .spell-card:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
-  
-  .spell-mana-cost {
-    margin-top: 5px;
-    font-size: small;
-  }
-  
+.spell-card:hover {
+  box-shadow: 0 0 0 2px #8e44ad;
+}
+
+.spell-card.selected {
+  box-shadow: 0 0 0 3px #f0c040;
+}
+
+.spell-card .card-front {
+  background-image: linear-gradient(160deg, #f0e8f8, #c4aed8);
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Large school icon used as the spell's primary visual */
+.spell-school-img {
+  width: 64px;
+  height: 64px;
+  filter: drop-shadow(0 2px 8px rgba(100,0,180,0.4));
+}
+
+.spell-name-front {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-align: center;
+  color: #2d0a5a;
+  line-height: 1.2;
+  padding: 0 4px;
+}
+
+.spell-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}

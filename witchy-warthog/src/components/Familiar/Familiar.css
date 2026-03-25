@@ -1,151 +1,69 @@
+/* ── Familiar Card ── */
 .familiar-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 100px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(196, 174, 190);
-    align-items: center;
-    position: relative;
-  }
-  
-  .familiar-card.selected {
-    border: 2px solid #333;
-  }
-  
-  .familiar-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .familiar-details {
-    text-align: center;
-  }
-  
-  .familiar-power {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .familiar-power img {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-  }
-  
-  .familiar-cost {
-    margin-top: 5px;
-  }
-  
-  .familiar-action-buttons {
-    margin-top: 20px;
-  }
-  
-  .familiar-action-buttons button {
-    margin: 5px;
-  }
-  
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  width: 144px;
+  aspect-ratio: 2 / 3;
+  cursor: pointer;
+  position: relative;
+  perspective: 700px;
+  transition: box-shadow 0.15s;
+}
 
+.familiar-card:hover {
+  box-shadow: 0 0 0 2px #a87c32;
+}
 
-/* Familiar Card Styles */
-.familiar-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 100px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(243,237,208);
-    align-items: center;
-    position: relative;
-  }
-  
-  .familiar-card .familiar-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .familiar-card .familiar-details {
-    text-align: center;
-  }
-  
-  .familiar-card .familiar-details h3 {
-    margin: 10px 0 5px;
-  }
-  
-  .familiar-card .familiar-details p {
-    margin: 5px 0;
-  }
-  
-  .familiar-deck {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
+.familiar-card.selected {
+  box-shadow: 0 0 0 3px #f0c040;
+}
 
-  /* Power Icon Styles */
-  .power-icon {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-  }
+.familiar-card .card-front {
+  background-image: linear-gradient(160deg, #f8f4e0, #d4c88a);
+}
 
-/* Tooltip styling */
-.tooltip {
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-  }
-  
-  .familiar-card:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
+.familiar-image {
+  width: 100%;
+  flex: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
 
-  /* Familiar Actions CSS */
-  .familiar-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .familiar-cards {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-  }
-  
-  .familiar-actions-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-bottom: 20px;
-  }
-  
-  .familiar-actions-buttons button {
-    margin: 0 10px;
-  }
-  
+.familiar-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}
+
+/* Familiar Actions */
+.familiar-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.familiar-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.familiar-actions-buttons {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.familiar-action-buttons {
+  margin-top: 12px;
+}
+
+.familiar-action-buttons button {
+  margin: 4px;
+}

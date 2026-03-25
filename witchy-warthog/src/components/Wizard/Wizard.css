@@ -1,115 +1,38 @@
+/* ── Wizard Card ── */
 .wizard-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 100px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-color: rgb(196, 174, 190);
-    align-items: center;
-    position: relative;
-  }
-  
-  .wizard-card.selected {
-    border: 2px solid #333;
-  }
-  
-  .wizard-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .wizard-details {
-    text-align: center;
-  }
-  
-  .wizard-power {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .wizard-power img {
-    width: 20px;
-    height: 20px;
-    margin-right: 5px;
-  }
-  
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  width: 144px;
+  aspect-ratio: 2 / 3;
+  cursor: pointer;
+  position: relative;
+  perspective: 700px;
+  transition: box-shadow 0.15s;
+}
 
-/* Wizard Card Styles */
-.wizard-card {
-    border: 1px solid #999;
-    border-radius: 8px;
-    width: 150px;
-    height: fit-content;
-    margin: 10px;
-    padding: 10px;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    background-image: linear-gradient( rgb(250,246,217), rgb(202,191,196));
-    align-items: center;
-    position: relative;
-  }
-  
-  .wizard-card .wizard-image {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .wizard-card .wizard-details {
-    text-align: center;
-  }
-  
-  .wizard-card .wizard-details h3 {
-    margin: 10px 0 5px;
-  }
-  
-  .wizard-card .wizard-details p {
-    margin: 5px 0;
-  }
-  
-  .wizard-deck {
-    display: flex;
-    /* flex-wrap: wrap; */
-    justify-content: center;
-  }
-  
-  /* Power Icon Styles */
-  .power-icon {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 20px;
-    height: 20px;
-  }
+.wizard-card:hover {
+  box-shadow: 0 0 0 2px #6c3fa8;
+}
 
-  /* Tooltip styling */
-.tooltip {
-    position: absolute;
-    top: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: black;
-    color: white;
-    padding: 5px;
-    border-radius: 5px;
-    white-space: nowrap;
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.3s;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-  }
-  
-  .wizard-card:hover .tooltip {
-    opacity: 1;
-    visibility: visible;
-  }
-  
+.wizard-card.selected {
+  box-shadow: 0 0 0 3px #f0c040;
+}
+
+.wizard-card .card-front {
+  background-image: linear-gradient(160deg, #faf6d9, #cac0c8);
+}
+
+.wizard-image {
+  width: 100%;
+  flex: 1;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.wizard-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+}

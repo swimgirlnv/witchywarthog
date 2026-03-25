@@ -2,23 +2,35 @@ import React from 'react';
 import { Tower } from '../../contexts/GameStateContext';
 import './Tower.css';
 
+const GOLD_ICON = 'https://i.imgur.com/plvPmY5.png';
+
 interface TowerCardProps {
   tower: Tower;
   onSelect: () => void;
   selected: boolean;
 }
 
-const TowerCard: React.FC<TowerCardProps> = ({ tower, onSelect, selected}) => {
-
+const TowerCard: React.FC<TowerCardProps> = ({ tower, onSelect, selected }) => {
   return (
     <div className={`tower-card ${selected ? 'selected' : ''}`} onClick={onSelect}>
-      <img src={tower.power.image} alt={tower.power.name} className="power-icon" />
-      <img src={tower.image} alt={tower.name} className='tower-image' />
-      <div className="tooltip">{tower.power.name}</div>
-      <div className="tower-details">
-        <b>{tower.name}</b>
-        <p>{tower.description}</p>
-        <p hidden={tower.cost == 0}>Cost: {tower.cost} Gold Coins</p>
+      {/* School badge — always visible, outside the flip */}
+      <div className="school-badge">
+        <img src={tower.power.image} alt={tower.power.name} />
+        <span className="school-badge-tooltip">{tower.power.name}</span>
+      </div>
+
+      <div className="card-inner">
+        <div className="card-face card-front">
+          <img src={tower.image} alt={tower.name} className="tower-image" />
+          <div className="card-cost">
+            <img src={GOLD_ICON} alt="gold" className="cost-icon" />
+            <span>{tower.cost}</span>
+          </div>
+        </div>
+        <div className="card-face card-back">
+          <b className="back-name">{tower.name}</b>
+          <p className="back-desc">{tower.description}</p>
+        </div>
       </div>
     </div>
   );
