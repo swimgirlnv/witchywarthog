@@ -176,11 +176,6 @@ const PlayerActions: React.FC = () => {
 
   return (
     <div className="player-actions">
-      {/* <div className="turn-status-card">
-        <span className="status-pill">Reagents {reagentTotal} / {carryLimit}</span>
-        <span className="status-pill">Mana {currentPlayer.resources.mana}</span>
-        <span className="status-pill">Gold {currentPlayer.resources.gold}</span>
-      </div> */}
 
       {!actionType && (
         <>
@@ -190,42 +185,36 @@ const PlayerActions: React.FC = () => {
               <span className="action-menu-icon">🌿</span>
               <span className="action-menu-body">
                 <span className="action-menu-label">Gather Reagents</span>
-                <span className="action-menu-hint">Harvest wild ingredients from your reagent cards</span>
               </span>
             </button>
             <button className="action-menu-btn" onClick={() => beginAction('convertResourcesToMana')}>
               <span className="action-menu-icon">✨</span>
               <span className="action-menu-body">
-                <span className="action-menu-label">Convert to Mana</span>
-                <span className="action-menu-hint">Transmute stockpiled reagents into arcane power</span>
+                <span className="action-menu-label">Convert Mana</span>
               </span>
             </button>
             <button className="action-menu-btn" onClick={() => beginAction('recruitWizard')}>
               <span className="action-menu-icon">🧙</span>
               <span className="action-menu-body">
-                <span className="action-menu-label">Recruit a Wizard</span>
-                <span className="action-menu-hint">Bid mana to bring a new mage to your cause</span>
+                <span className="action-menu-label">Recruit Wizard</span>
               </span>
             </button>
             <button className="action-menu-btn" onClick={() => beginAction('researchSpell')}>
               <span className="action-menu-icon">📜</span>
               <span className="action-menu-body">
-                <span className="action-menu-label">Research a Spell</span>
-                <span className="action-menu-hint">Spend 5 mana to decipher forbidden arcane knowledge</span>
+                <span className="action-menu-label">Research Spell</span>
               </span>
             </button>
             <button className="action-menu-btn" onClick={() => beginAction('createTower')}>
               <span className="action-menu-icon">🏰</span>
               <span className="action-menu-body">
-                <span className="action-menu-label">Create a Tower</span>
-                <span className="action-menu-hint">Raise a stronghold and expand your carry limit</span>
+                <span className="action-menu-label">Create Tower</span>
               </span>
             </button>
             <button className="action-menu-btn" onClick={() => beginAction('summonFamiliar')}>
               <span className="action-menu-icon">🦎</span>
               <span className="action-menu-body">
-                <span className="action-menu-label">Summon a Familiar</span>
-                <span className="action-menu-hint">Bind a creature and unleash its special power</span>
+                <span className="action-menu-label">Summon Familiar</span>
               </span>
             </button>
           </div>
