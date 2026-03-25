@@ -6,7 +6,7 @@ interface Card {
   name: string;
   description: string;
   image: string;
-  power: Power;
+  power?: Power;
 }
 
 interface CardAreaProps {
@@ -33,10 +33,12 @@ const CardArea: React.FC<CardAreaProps> = ({ title, cards }) => {
                 key={card.id}
                 className="card-stack-item"
                 style={{ '--stack-index': index } as React.CSSProperties}
-                title={`${card.name} • ${card.power.name}${card.description ? ` • ${card.description}` : ''}`}
+                title={`${card.name}${card.power ? ` • ${card.power.name}` : ''}${card.description ? ` • ${card.description}` : ''}`}
               >
                 <img src={card.image} alt={card.name} className="card-image" />
-                <img className="card-power-image" src={card.power.image} alt={card.power.name} />
+                {card.power && (
+                  <img className="card-power-image" src={card.power.image} alt={card.power.name} />
+                )}
               </div>
             ))}
             {cards.length > previewCards.length && (

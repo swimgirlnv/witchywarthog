@@ -253,6 +253,15 @@ const GameBoard: React.FC = () => {
               <CardArea title="Familiars" cards={currentPlayer.familiars} />
               <CardArea title="Spells (Uncast)" cards={currentPlayer.spells.filter(s => !s.isCast)} />
               <CardArea title="Spells (Cast)" cards={currentPlayer.spells.filter(s => s.isCast)} />
+              <CardArea
+                title="Dungeon Treasure"
+                cards={currentPlayer.dungeonTreasures.map(treasure => ({
+                  id: treasure.id,
+                  name: `${treasure.value ?? 0} Gold`,
+                  description: treasure.description,
+                  image: treasure.image,
+                }))}
+              />
             </div>
           </div>
         </div>
