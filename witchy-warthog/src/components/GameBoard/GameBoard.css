@@ -1,0 +1,848 @@
+/* ── Game board root ── */
+.game-board {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background-image: url('https://i.imgur.com/6kHA8Dd.png');
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* ── Resource track bar (market values) ── */
+.resource-tracks {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 16px;
+  background: rgba(30, 16, 64, 0.88);
+  border-bottom: 1px solid rgba(255,255,255,0.12);
+}
+
+.resource-track {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.resource-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+/* ── 4-column card market ── */
+.card-areas {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  gap: 0;
+  background: rgba(20, 10, 45, 0.75);
+  border-bottom: 2px solid rgba(255,255,255,0.1);
+  flex-shrink: 0;
+}
+
+/* collapse the row wrappers so their children sit directly in the flex row */
+.left-board,
+.mid-left-board,
+.mid-right-board, 
+.right-board {
+  display: contents;
+  display: flex;
+  flex-direction: column;
+}
+
+.tower-offer,
+.wizard-offer,
+.familiar-offer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-width: 100px;
+  padding: 1px 1px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+}
+
+.spell-offer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1.6;
+  min-width: 360px;
+  padding: 6px 6px;
+  border-right: none;
+}
+
+.tower-offer:last-child,
+.spell-offer { border-right: none; }
+
+.tower-offer h3,
+.wizard-offer h3,
+.familiar-offer h3,
+.spell-offer h3,
+.achievements h3 {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.55);
+  margin: 2px 0 4px;
+  text-align: center;
+}
+
+/* Face-down deck card */
+.face-down-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.face-down-card-image {
+  width: 68px;
+  height: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+}
+
+/* Offer card rows — 2×2 grid, no scroll */
+.wizard-deck,
+.tower-deck,
+.familiar-deck,
+.spell-deck {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px 14px;
+  width: 100%;
+  padding: 2px 0;
+}
+
+/* Compact cards in the market offer columns */
+.tower-offer .tower-card,
+.wizard-offer .wizard-card,
+.familiar-offer .familiar-card {
+  width: 92px;
+  padding: 5px;
+  margin: 0;
+}
+
+/* Spell offer — strict 2×2 grid */
+.spell-offer .spell-deck {
+  display: grid;
+  grid-template-columns: repeat(2, 120px);
+  justify-content: center;
+  gap: 20px 30px;
+}
+
+.spell-offer .spell-card {
+  width: 120px;
+  padding: 6px;
+  margin: 0;
+}
+
+/* ── Player area ── */
+.all-player-areas {
+  flex: 1;
+  padding: 0 12px 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.player-area {
+  border: 1px solid #ccc;
+  padding: 12px 16px;
+  margin: 10px 0;
+  border-radius: 10px;
+}
+
+.player-resources {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin: 6px 0;
+}
+
+/* Resource chips inside white player panels need dark styling */
+.player-resources .resource-track {
+  background: rgba(0, 0, 0, 0.07);
+  color: #1a1a1a;
+  border: 1px solid rgba(0,0,0,0.12);
+}
+
+.player-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 6px;
+  align-items: flex-start;
+}
+
+.player-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  margin-top: 6px;
+}
+
+.player-actions > h3 {
+  color: #1a1a1a;
+  margin: 4px 0;
+  font-size: 0.9rem;
+}
+
+.player-actions button {
+  margin: 2px 3px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  color: #f0f0f0;
+}
+
+.player-actions button.selected {
+  background-color: #4caf50;
+  color: white;
+}
+
+.player-actions input {
+  padding: 6px 10px;
+  margin: 6px 0;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* ── Action buttons row ── */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: flex-start;
+}
+
+.action-buttons button {
+  flex: 1;
+  min-width: 110px;
+  padding: 8px 10px;
+  font-size: 0.82rem;
+}
+
+/* ── Resource Card (gather) ── */
+.resource-card {
+  border: 1px solid #bbb;
+  border-radius: 8px;
+  width: 130px;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  background-color: #f7f4ee;
+  transition: border-color 0.15s, background 0.15s;
+}
+.resource-card.selected {
+  border-color: #4caf50;
+  background-color: #e8f8ee;
+}
+
+.gather-section,
+.increase-section {
+  margin-bottom: 6px;
+}
+
+.gather-section b,
+.increase-section b {
+  display: block;
+  font-size: 0.7rem;
+  text-align: center;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin-bottom: 4px;
+}
+
+.gather-section b { background: #c0392b; color: #fff; }
+.increase-section b { background: #2980b9; color: #fff; }
+
+.resources {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding: 3px 0;
+}
+
+.resource {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.resource img {
+  width: 22px;
+  height: 22px;
+}
+
+.resource span {
+  font-size: 0.72rem;
+  margin-top: 2px;
+}
+
+.resource.selected {
+  outline: 2px solid #4caf50;
+  border-radius: 50%;
+}
+
+/* ── Player's card collection ── */
+.card-area {
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
+}
+
+.card-area h2 {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 3px;
+  color: #444;
+}
+
+.cards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.card {
+  border: 1px solid #ccc;
+  padding: 5px;
+  width: 80px;
+  background: rgba(255,255,255,0.9);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  color: #1a1a1a;
+  font-size: 0.7rem;
+}
+
+.card b {
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.card p {
+  font-size: 0.65rem;
+  margin: 0;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.card-image {
+  width: 70px;
+  height: auto;
+  border-radius: 4px;
+}
+
+.card-power-image {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Turn Banner ── */
+.turn-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #2d1b4e, #4a2878);
+  color: #fff;
+  flex-wrap: wrap;
+  box-sizing: border-box;
+}
+.turn-label {
+  font-size: 0.85rem;
+  opacity: 0.75;
+}
+.turn-player {
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+.turn-vp-scores {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+}
+.vp-chip {
+  background: rgba(255,255,255,0.15);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+}
+.vp-chip.active {
+  background: #f0c040;
+  color: #222;
+  font-weight: bold;
+}
+.end-turn-banner-btn {
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.end-turn-banner-btn:hover { background: #cf6d17; }
+
+
+/* ── Market track label ── */
+.track-label {
+  font-size: 0.8rem;
+  font-weight: bold;
+  opacity: 0.7;
+  width: 100%;
+  text-align: center;
+  margin-bottom: -6px;
+}
+
+/* ── Player areas ── */
+.all-player-areas { width: 100%; }
+
+.active-player {
+  border: 2px solid #f0c040;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 10px;
+  margin: 8px 12px;
+  padding: 12px 16px;
+  color: #1a1a1a;
+}
+.inactive-player {
+  border: 1px solid #bbb;
+  background: rgba(255,255,255,0.82);
+  border-radius: 10px;
+  margin: 4px 12px;
+  padding: 8px 12px;
+  color: #1a1a1a;
+}
+.player-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.player-header h2 { margin: 0; color: #1a1a1a; font-size: 1rem; }
+.player-vp {
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: #f0c040;
+  color: #222;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+.your-turn-badge {
+  display: inline-block;
+  background: #27ae60;
+  color: #fff;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+/* ── Action panel — fixed overlay so it never causes page overflow ── */
+.action-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 300;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #bbb;
+  border-radius: 12px;
+  padding: 18px 20px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+  width: 90vw;
+  max-width: 660px;
+}
+
+/* Dim backdrop behind open action panel */
+.action-panel::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: -1;
+  border-radius: 0;
+}
+.action-panel-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.action-panel-header h3 { margin: 0; }
+.back-btn {
+  background: transparent;
+  border: 1px solid #999;
+  border-radius: 6px;
+  padding: 4px 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+.action-hint {
+  font-size: 0.8rem;
+  color: #444;
+  margin: 0 0 10px;
+}
+
+/* Cards inside the action panel overlay — full size, row layout */
+.wizards-on-offer,
+.towers-on-offer,
+.familiar-cards,
+.spells-on-offer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  justify-content: center;
+  margin: 8px 0;
+}
+.carry-limit {
+  font-size: 0.8rem;
+  color: #444;
+  font-weight: 600;
+  text-align: right;
+  padding: 2px 6px;
+}
+.confirm-btn {
+  margin-top: 10px;
+  background: #27ae60;
+  color: #fff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.confirm-btn:hover { background: #1e8449; }
+
+/* ── Gather ── */
+.gather-card-wrapper { cursor: pointer; }
+.gather-card-wrapper:hover .resource-card { border-color: #27ae60; background: #e8f8ee; }
+
+/* ── Convert ── */
+.convert-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.convert-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  background: #f9f9f9;
+  cursor: pointer;
+  min-width: 80px;
+  gap: 2px;
+}
+.convert-btn.selected { border-color: #3498db; background: #ebf5fb; }
+.convert-btn.disabled { opacity: 0.4; cursor: not-allowed; }
+.convert-btn-name { font-weight: bold; font-size: 0.85rem; }
+.convert-btn-have, .convert-btn-rate { font-size: 0.72rem; color: #555; }
+.convert-qty-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.convert-qty-row input { width: 60px; padding: 6px; border-radius: 4px; border: 1px solid #ccc; }
+.mana-preview {
+  font-weight: bold;
+  color: #8e44ad;
+  font-size: 1rem;
+}
+
+/* ── Bidding ── */
+.bidding-panel {
+  background: #f4ecff;
+  border: 1px solid #9b59b6;
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.bid-controls { display: flex; gap: 10px; margin-top: 8px; }
+
+/* ── Action done / end turn ── */
+.action-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  color: #1a1a1a;
+}
+.action-done-msg { font-size: 1rem; font-weight: bold; color: #27ae60; }
+.end-turn-btn {
+  background: #e67e22;
+  color: #fff;
+  border: none;
+  padding: 10px 28px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+.end-turn-btn:hover { background: #cf6d17; }
+
+/* ── Shared card anatomy ── */
+.card-cost {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #222;
+}
+.cost-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* "or" separator between primary and reagent costs on card fronts */
+.cost-or {
+  font-size: 0.58rem;
+  font-style: italic;
+  font-weight: 600;
+  color: rgba(0,0,0,0.4);
+  line-height: 1;
+  text-align: center;
+  display: block;
+  margin: 1px 0;
+}
+
+/* Individual reagent pip on card fronts (icon + qty) */
+.reagent-cost-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 1px 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* ── Card flip animation ── */
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transition: transform 0.45s ease;
+}
+
+.wizard-card:hover .card-inner,
+.tower-card:hover .card-inner,
+.familiar-card:hover .card-inner,
+.spell-card:hover .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 7px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  background: linear-gradient(160deg, #1a0a3a, #3d1f6e);
+  color: #fff;
+  justify-content: center;
+  gap: 5px;
+  text-align: center;
+  padding: 10px 8px;
+}
+
+/* ── School badge (notification dot, top-right of card) ── */
+.school-badge {
+  position: absolute;
+  top: -9px;
+  right: -9px;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.9);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+}
+
+.school-badge img {
+  width: 20px;
+  height: 20px;
+}
+
+.school-badge-tooltip {
+  position: absolute;
+  top: calc(100% + 5px);
+  right: 0;
+  background: rgba(15, 8, 40, 0.95);
+  color: #fff;
+  padding: 3px 9px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s;
+  pointer-events: none;
+  z-index: 20;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.school-badge:hover .school-badge-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.card-back .back-school {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.6);
+}
+
+.card-back .back-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.card-back .back-desc {
+  font-size: 0.73rem;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.88);
+  margin: 0;
+}
+
+.card-back .cast-cost {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  margin-top: 4px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  width: 100%;
+}
+
+.card-back .cast-cost-label {
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.5);
+  width: 100%;
+  text-align: center;
+}
+
+.card-back .cast-reagent {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  padding: 2px 5px;
+  font-size: 0.65rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.card-back .cast-reagent img {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Game over ── */
+.game-over-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.game-over-box {
+  background: #1e1040;
+  color: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 560px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 0 40px rgba(200,150,255,0.4);
+}
+.game-over-box h1 { margin-top: 0; font-size: 2.2rem; }
+.final-scores { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+.score-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 8px;
+  padding: 10px 14px;
+}
+.score-row.winner { background: rgba(240,192,64,0.25); border: 1px solid #f0c040; }
+.score-rank { font-size: 1.4rem; width: 32px; text-align: center; }
+.score-name { font-weight: bold; font-size: 1rem; min-width: 80px; }
+.score-breakdown {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  flex: 1;
+  font-size: 0.75rem;
+  opacity: 0.75;
+}
+.score-total {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #f0c040;
+  min-width: 50px;
+  text-align: right;
+}
+

@@ -8,25 +8,35 @@ import FamiliarDeck from '../Familiar/FamiliarDeck';
 import SpellDeck from '../Spell/SpellDeck';
 import FaceDownCard from '../FaceDownCard';
 import PlayerActions from '../PlayerActions/PlayerActions';
+import './GameBoard.css';
+import HelperSidekick from '../HelperSidekick/HelperSidekick';
+import AchievementsDeck from '../Achievements/AchievementsDeck';
 
 interface AnyCard { power: { id: string; name: string; description: string; image: string }; }
 
 const calculateVP = (
-  player: { resources: any; towers: Tower[]; wizards: Wizard[]; familiars: Familiar[]; spells: Spell[] },
+  player: { resources: any; towers: Tower[]; wizards: Wizard[]; familiars: Familiar[]; spells: Spell[]; dungeonTreasures?: { value?: number }[] },
   allPlayers: typeof player[]
 ) => {
   let vp = 0;
 
-  // Base: gold = 1 VP each, towers/wizards = 2 VP each, familiars = 1 VP, cast spells = 3 VP base
   vp += player.resources.gold;
-  vp += player.towers.length * 2;
-  vp += player.wizards.length * 2;
-  vp += player.familiars.length;
+
+  player.wizards.forEach(wizard => {
+    player.towers.forEach(tower => {
+      vp += wizard.power.name === tower.power.name ? 10 : 5;
+    });
+  });
 
   const allCards: AnyCard[] = [...player.wizards, ...player.towers, ...player.familiars, ...player.spells];
 
   player.spells.filter(s => s.isCast).forEach(spell => {
-    vp += 3; // base cast bonus
+    const hasMatchingWizard = player.wizards.some(wizard => wizard.power.name === spell.power.name);
+    const hasMatchingTower = player.towers.some(tower => tower.power.name === spell.power.name);
+    if (hasMatchingWizard && hasMatchingTower) {
+      vp += 3;
+    }
+
     const d = spell.description;
     if (d.includes('Tower Cards = +1 VP')) {
       vp += player.towers.length;
@@ -60,11 +70,13 @@ const calculateVP = (
     }
   });
 
+  vp += player.dungeonTreasures?.reduce((sum, card) => sum + (card.value ?? 0), 0) ?? 0;
+
   return vp;
 };
 
 const GameBoard: React.FC = () => {
-  const { gameState, endTurn } = useGameState();
+  const { gameState, endTurn, activeRoomCode, isMyTurn } = useGameState();
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
 
   if (gameState.gameEnded) {
@@ -74,7 +86,7 @@ const GameBoard: React.FC = () => {
       <div className="game-over-overlay">
         <div className="game-over-box">
           <h1>Game Over!</h1>
-          <p>The wizard market has been exhausted.</p>
+          <p>A market deck has been exhausted.</p>
           <div className="final-scores">
             {scores.map(({ player, vp }, i) => (
               <div key={player.id} className={`score-row ${i === 0 ? 'winner' : ''}`}>
@@ -100,7 +112,7 @@ const GameBoard: React.FC = () => {
     <div className="game-board">
       {/* Turn banner */}
       <div className="turn-banner">
-        <span className="turn-label">Turn {gameState.turnNumber}</span>
+        <span className="turn-label">Turn {gameState.turnNumber}{activeRoomCode ? ` • Room ${activeRoomCode}` : ''}</span>
         <span className="turn-player">{currentPlayer.name}'s Turn</span>
         <div className="turn-vp-scores">
           {gameState.players.map(p => (
@@ -109,7 +121,7 @@ const GameBoard: React.FC = () => {
             </span>
           ))}
         </div>
-        <button className="end-turn-banner-btn" onClick={endTurn}>End Turn</button>
+        {isMyTurn && <button className="end-turn-banner-btn" onClick={() => { void endTurn(); }}>End Turn</button>}
       </div>
 
       {/* Market resource track */}
@@ -124,28 +136,48 @@ const GameBoard: React.FC = () => {
 
       {/* Card market */}
       <div className="card-areas">
-        <div className="top-board">
+
+        {/* Left board: towers and helper sidekick*/}
+        <div className="left-board">
           <div className="tower-offer">
-            <FaceDownCard imageUrl="https://i.imgur.com/CpSDZCN.png" />
+            {/* <FaceDownCard imageUrl="https://i.imgur.com/CpSDZCN.png" /> */}
             <h3>Towers on Offer</h3>
             <TowerDeck towers={gameState.towersOnOffer} onSelectTower={() => {}} />
           </div>
+          <div className="helper-sidekick">
+            {/* <FaceDownCard imageUrl="https://i.imgur.com/178eULE.png" /> */}
+            <HelperSidekick />
+          </div>
+        </div>
+
+        {/* Middle board: wizards and familiars */}
+        <div className="mid-board">
           <div className="wizard-offer">
-            <FaceDownCard imageUrl="https://i.imgur.com/178eULE.png" />
+            {/* <FaceDownCard imageUrl="https://i.imgur.com/178eULE.png" /> */}
             <h3>Wizards on Offer</h3>
             <WizardDeck wizards={gameState.wizardsOnOffer} onSelectWizard={() => {}} />
           </div>
-        </div>
-        <div className="bottom-board">
           <div className="familiar-offer">
-            <FaceDownCard imageUrl="https://i.imgur.com/VxxrBB8.png" />
+            {/* <FaceDownCard imageUrl="https://i.imgur.com/VxxrBB8.png" /> */}
             <h3>Familiars on Offer</h3>
             <FamiliarDeck familiars={gameState.familiarsOnOffer} onSelectFamiliar={() => {}} />
           </div>
+        </div>
+        
+        {/* Mid Right board: spells */}
+        <div className="mid-right-board">
           <div className="spell-offer">
-            <FaceDownCard imageUrl="https://i.imgur.com/cqW5vls.png" />
+            {/* <FaceDownCard imageUrl="https://i.imgur.com/cqW5vls.png" /> */}
             <h3>Spells on Offer</h3>
             <SpellDeck spells={gameState.spellsOnOffer} onSelectSpell={() => {}} />
+          </div>
+        </div>
+
+        {/* Far right board: achievements */}
+        <div className="right-board">
+          <div className="achievements">
+            <h3>Achievements</h3>
+            <AchievementsDeck achievements={gameState.achievementsOnOffer} />
           </div>
         </div>
       </div>

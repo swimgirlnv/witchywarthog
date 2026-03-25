@@ -3,7 +3,7 @@
   border: 1px solid #bbb;
   border-radius: 8px;
   width: 144px;
-  aspect-ratio: 2 / 3;
+  aspect-ratio: 3 / 5;
   cursor: pointer;
   position: relative;
   perspective: 700px;
@@ -62,8 +62,17 @@
 
 .familiar-action-buttons {
   margin-top: 12px;
+  width: 100%;
 }
 
 .familiar-action-buttons button {
-  margin: 4px;
+  margin: 0;
+}
+
+.familiar-action-button {
+  min-height: 60px;
+}
+
+.familiar-action-button:hover {
+  background-color: #005f73;
 }

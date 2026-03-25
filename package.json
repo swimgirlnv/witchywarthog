@@ -1,0 +1,12 @@
+{
+  "name": "witchywarthog-monorepo-root",
+  "private": true,
+  "workspaces": [
+    "witchy-warthog"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace witchy-warthog",
+    "dev": "npm run dev --workspace witchy-warthog",
+    "lint": "npm run lint --workspace witchy-warthog"
+  }
+}

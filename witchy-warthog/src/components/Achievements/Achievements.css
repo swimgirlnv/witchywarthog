@@ -1,0 +1,28 @@
+.achievements-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.achievement-tile {
+  background: linear-gradient(180deg,#fff9e6,#f3e6c0);
+  border: 2px solid #c9a76b;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: #3b2a18;
+  max-width: 120px;
+}
+
+.ach-title {
+  font-weight: bold;
+  font-size: smaller;
+  margin-bottom: 0.25rem;
+  justify-content: center;
+  text-align: center;
+}
+
+.ach-desc {
+  font-size: x-small;
+  margin-bottom: 0.5rem;
+}

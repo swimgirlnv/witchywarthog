@@ -1,33 +1,173 @@
 .login-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
-    background-size: cover;
-    background-image: url(https://i.imgur.com/s2LDGi5.jpeg);
-  }
-  
-  .login-container {
-    background: rgba(255, 255, 255, 0.8);
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-    text-align: center;
-    width: fit-content;
-  }
-  
-  .login-container input {
-    display: block;
-    width: fit-content;
-    margin: 10px 0;
-    padding: 10px;
-    font-size: 16px;
-  }
-  
-  .login-container button {
-    padding: 10px 20px;
-    font-size: 16px;
-    margin: 10px 0;
-  }
-  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
+  background-image: url('https://i.imgur.com/s2LDGi5.jpeg');
+  background-size: cover;
+  background-position: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* ── Card ── */
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background: rgba(12, 6, 32, 0.90);
+  border: 1px solid rgba(200,160,255,0.2);
+  border-radius: 16px;
+  padding: 32px 28px;
+  box-shadow: 0 8px 48px rgba(0,0,0,0.7), inset 0 0 40px rgba(80,40,160,0.06);
+  backdrop-filter: blur(6px);
+}
+
+/* ── Branding ── */
+.login-brand {
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+.login-mascot {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 14px rgba(160,100,255,0.7));
+  margin-bottom: 8px;
+}
+
+.login-game-title {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #f0c040;
+  margin: 0 0 4px;
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 20px rgba(240,192,64,0.45);
+}
+
+.login-tagline {
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.45);
+  font-style: italic;
+  margin: 0;
+}
+
+/* ── Divider ── */
+.login-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(200,160,255,0.3), transparent);
+  margin: 18px 0;
+}
+
+/* ── Heading ── */
+.login-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  margin: 0 0 16px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* ── Form ── */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.login-field label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: rgba(255,255,255,0.5);
+}
+
+.login-field input {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(200,160,255,0.2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.95rem;
+  color: #fff;
+  outline: none;
+  transition: border-color 0.15s, background 0.15s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.login-field input::placeholder {
+  color: rgba(255,255,255,0.2);
+}
+
+.login-field input:focus {
+  border-color: rgba(160,120,255,0.6);
+  background: rgba(255,255,255,0.09);
+}
+
+/* ── Error ── */
+.login-error {
+  font-size: 0.8rem;
+  color: #ff7070;
+  background: rgba(255,80,80,0.1);
+  border: 1px solid rgba(255,80,80,0.25);
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 0;
+}
+
+/* ── Submit button ── */
+.login-submit-btn {
+  margin-top: 4px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  border-radius: 10px;
+  border: 2px solid #f0c040;
+  background: linear-gradient(135deg, #6c3fa8, #3d1f6e);
+  color: #f0c040;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  transition: all 0.2s;
+  box-shadow: 0 0 20px rgba(240,192,64,0.15), 0 4px 14px rgba(0,0,0,0.4);
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #7a4fc0, #4a2888);
+  box-shadow: 0 0 28px rgba(240,192,64,0.3), 0 6px 18px rgba(0,0,0,0.4);
+  transform: translateY(-1px);
+}
+
+.login-submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ── Toggle link ── */
+.login-toggle-btn {
+  display: block;
+  width: 100%;
+  margin-top: 14px;
+  background: transparent;
+  border: none;
+  color: rgba(160,130,255,0.7);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-align: center;
+  transition: color 0.15s;
+  padding: 4px;
+}
+
+.login-toggle-btn:hover {
+  color: rgba(180,150,255,1);
+}

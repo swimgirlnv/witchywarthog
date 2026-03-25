@@ -1,4 +1,4 @@
-import { Familiar, Power } from "../contexts/GameStateContext";
+import { Familiar, Power, ResourceOptions } from "../contexts/GameStateContext";
 
 const powers: Power[] = [
     { id: '1', name: 'Conjuring', description: 'Summoning creatures and objects', image: 'https://i.imgur.com/a4RpdV0.png' },
@@ -49,8 +49,44 @@ const assignRandomCost = (): number => {
     return cost;
     };
 
+const generateReagentCost = (): ResourceOptions => {
+  const cost: ResourceOptions = {
+    mandrake: 0,
+    nightshade: 0,
+    foxglove: 0,
+    toadstool: 0,
+    horn: 0,
+  };
+  const resourceKeys = Object.keys(cost) as (keyof ResourceOptions)[];
+  const numberOfPips = Math.floor(Math.random() * 3) + 1;
 
-const allFamiliars: Familiar[] = Array.from({ length: 25 }, (_, index) => {
+  for (let i = 0; i < numberOfPips; i += 1) {
+    const resource = resourceKeys[Math.floor(Math.random() * resourceKeys.length)];
+    cost[resource] += 1;
+  }
+
+  return cost;
+};
+
+const generateGatherBundle = (): ResourceOptions => {
+  const bundle: ResourceOptions = {
+    mandrake: 0,
+    nightshade: 0,
+    foxglove: 0,
+    toadstool: 0,
+    horn: 0,
+  };
+  const resourceKeys = Object.keys(bundle) as (keyof ResourceOptions)[];
+
+  for (let i = 0; i < 3; i += 1) {
+    const resource = resourceKeys[Math.floor(Math.random() * resourceKeys.length)];
+    bundle[resource] += 1;
+  }
+
+  return bundle;
+};
+
+export const allFamiliars: Familiar[] = Array.from({ length: 25 }, (_, index) => {
     const id = `familiar${index + 1}`;
     const power = assignRandomPower();
     return {
@@ -59,6 +95,8 @@ const allFamiliars: Familiar[] = Array.from({ length: 25 }, (_, index) => {
       description: familiarDescriptions[power.name],
       power: power,
       cost: assignRandomCost(),
+      reagentCost: generateReagentCost(),
+      gather: generateGatherBundle(),
       image: powerImages[power.name],
     };
   });

@@ -1,0 +1,220 @@
+/* ── Helper button ── */
+.helper-image-button {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.helper-image-button:hover {
+  transform: scale(1.08) rotate(-3deg);
+}
+
+.helper-image {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 6px 12px rgba(0,0,0,0.4));
+}
+
+/* ── Overlay ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 4, 28, 0.72);
+  z-index: 1000;
+  padding: 1.5rem;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Scroll modal ── */
+.scroll-modal {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  /* Parchment with subtle texture */
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(180,140,80,0.06) 28px,
+      rgba(180,140,80,0.06) 29px
+    ),
+    linear-gradient(175deg, #fdf5dc 0%, #f5e8be 40%, #eedcaa 100%);
+  border-radius: 4px;
+  padding: 2.5rem 2rem 2rem;
+  box-shadow:
+    0 0 0 1px #b8903a,
+    0 0 0 4px #d4ab62,
+    0 0 0 6px #b8903a,
+    0 24px 60px rgba(0,0,0,0.55);
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  color: #2e1f0e;
+  overflow: visible;
+}
+
+/* Rolled cylinder ends */
+.scroll-modal::before,
+.scroll-modal::after {
+  content: '';
+  position: absolute;
+  left: -6px;
+  right: -6px;
+  height: 38px;
+  background: linear-gradient(
+    180deg,
+    #c9a050 0%,
+    #e8c87a 30%,
+    #f5dc9e 50%,
+    #d4a84a 70%,
+    #a07830 100%
+  );
+  border-radius: 50% / 50%;
+  box-shadow:
+    inset 0 3px 6px rgba(255,255,255,0.25),
+    inset 0 -4px 8px rgba(0,0,0,0.2),
+    0 4px 10px rgba(0,0,0,0.3);
+  z-index: 3;
+}
+
+.scroll-modal::before { top: -19px; }
+.scroll-modal::after  { bottom: -19px; }
+
+/* Scroll rods (the wooden dowels at top and bottom) */
+.scroll-rod {
+  position: absolute;
+  left: -12px;
+  right: -12px;
+  height: 10px;
+  background: linear-gradient(180deg, #7a4e1e, #c08540, #7a4e1e);
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.45);
+  z-index: 4;
+}
+
+.scroll-rod-top    { top: -24px; }
+.scroll-rod-bottom { bottom: -24px; }
+
+/* ── Close button ── */
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #7a4e1e;
+  z-index: 5;
+  line-height: 1;
+  opacity: 0.7;
+  transition: opacity 0.15s;
+}
+
+.close-button:hover { opacity: 1; }
+
+/* ── Header ── */
+.scroll-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.scroll-ornament {
+  font-size: 1rem;
+  color: #a07030;
+  margin: 0 0.5rem;
+}
+
+.scroll-title {
+  display: inline;
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+  color: #2e1f0e;
+  margin: 0 0.4rem;
+}
+
+.scroll-subtitle {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: #7a5530;
+  margin: 2px 0 0;
+  letter-spacing: 0.06em;
+}
+
+/* ── Divider ── */
+.scroll-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #b8903a 20%, #b8903a 80%, transparent);
+  margin: 0.6rem 0;
+}
+
+/* ── Scroll body ── */
+.scroll-body {
+  max-height: 55vh;
+  overflow-y: auto;
+  padding-right: 0.4rem;
+  scrollbar-width: thin;
+  scrollbar-color: #c9a050 #f0e0b0;
+}
+
+.scroll-body::-webkit-scrollbar { width: 5px; }
+.scroll-body::-webkit-scrollbar-track { background: #f0e0b0; border-radius: 3px; }
+.scroll-body::-webkit-scrollbar-thumb { background: #c9a050; border-radius: 3px; }
+
+/* ── Rules sections ── */
+.rules-section {
+  margin-bottom: 0.9rem;
+}
+
+.rules-section-heading {
+  font-size: 0.82rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #7a3a10;
+  margin: 0 0 0.35rem;
+  border-bottom: 1px dotted #c9a050;
+  padding-bottom: 0.15rem;
+}
+
+.rules-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  list-style: none;
+}
+
+.rules-list li {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: #2e1f0e;
+  margin-bottom: 0.2rem;
+  padding-left: 0.2rem;
+}
+
+.rules-list li::before {
+  content: '›  ';
+  color: #a07030;
+  font-weight: bold;
+}
+
+/* ── Footer ── */
+.scroll-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  font-style: italic;
+  color: #9a6828;
+  margin: 0;
+}
+
+@media (max-width: 420px) {
+  .helper-image { width: 72px; height: 72px; }
+  .scroll-modal { padding: 1.5rem 1rem; }
+  .scroll-title { font-size: 1.2rem; }
+}

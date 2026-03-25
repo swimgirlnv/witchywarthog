@@ -1,0 +1,72 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isGameCollection(gameCollection) {
+      return gameCollection.matches('games_.*');
+    }
+
+    function isParticipant(room) {
+      return signedIn() && (
+        (room.players.size() > 0 && room.players[0].uid == request.auth.uid) ||
+        (room.players.size() > 1 && room.players[1].uid == request.auth.uid) ||
+        (room.players.size() > 2 && room.players[2].uid == request.auth.uid) ||
+        (room.players.size() > 3 && room.players[3].uid == request.auth.uid)
+      );
+    }
+
+    function isLobbyUpdate() {
+      return resource.data.status == 'lobby' &&
+        request.resource.data.status == 'lobby' &&
+        resource.data.hostUid == request.resource.data.hostUid &&
+        resource.data.code == request.resource.data.code &&
+        request.resource.data.gameState == null &&
+        request.resource.data.players.size() <= 4 &&
+        isParticipant(request.resource.data);
+    }
+
+    function isHostStart() {
+      return resource.data.status == 'lobby' &&
+        request.resource.data.status == 'playing' &&
+        request.auth.uid == resource.data.hostUid &&
+        request.resource.data.hostUid == resource.data.hostUid &&
+        request.resource.data.players == resource.data.players &&
+        request.resource.data.gameState != null;
+    }
+
+    function currentTurnUid(gameState) {
+      return gameState.players[gameState.currentPlayerIndex].id;
+    }
+
+    function isPlayingStateUpdate() {
+      return resource.data.status == 'playing' &&
+        request.resource.data.status == 'playing' &&
+        request.resource.data.hostUid == resource.data.hostUid &&
+        request.resource.data.players == resource.data.players &&
+        request.auth.uid == currentTurnUid(resource.data.gameState);
+    }
+
+    match /{gameCollection}/{roomCode} {
+      allow read: if isGameCollection(gameCollection) && isParticipant(resource.data);
+
+      allow create: if isGameCollection(gameCollection) &&
+        signedIn() &&
+        request.resource.data.code == roomCode &&
+        request.resource.data.hostUid == request.auth.uid &&
+        request.resource.data.status == 'lobby' &&
+        request.resource.data.players.size() == 1 &&
+        request.resource.data.players[0].uid == request.auth.uid &&
+        request.resource.data.gameState == null;
+
+      allow update: if isGameCollection(gameCollection) &&
+        signedIn() &&
+        (isLobbyUpdate() || isHostStart() || isPlayingStateUpdate());
+
+      allow delete: if false;
+    }
+  }
+}

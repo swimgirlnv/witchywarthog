@@ -1,16 +1,11 @@
 {
-    "builds": [
-      {
-        "src": "witchy-warthog/package.json",
-        "use": "@vercel/static-build",
-        "config": {
-          "distDir": "witchy-warthog/dist"
-        }
-      }
-    ],
-    "routes": [
-      { "src": "/(.*)", "dest": "/" }
-    ],
-    "buildCommand": "cd witchy-warthog && npm install && npm run build"
-  }
-  
+  "installCommand": "npm install",
+  "buildCommand": "npm run build",
+  "outputDirectory": "witchy-warthog/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
