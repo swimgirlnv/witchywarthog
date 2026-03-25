@@ -76,7 +76,7 @@ const calculateVP = (
 };
 
 const GameBoard: React.FC = () => {
-  const { gameState, endTurn, activeRoomCode, isMyTurn, viewerPlayerId } = useGameState();
+  const { gameState, activeRoomCode, viewerPlayerId } = useGameState();
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const inactivePlayers = gameState.players.filter(player => player.id !== currentPlayer.id);
 
@@ -122,7 +122,6 @@ const GameBoard: React.FC = () => {
             </span>
           ))}
         </div>
-        {isMyTurn && <button className="end-turn-banner-btn" onClick={() => { void endTurn(); }}>End Turn</button>}
       </div>
 
       {/* Card market */}
