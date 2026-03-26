@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged, type User } from 'firebase/auth';
 import './JoinGame.css';
 import { useGameState } from '../../contexts/GameStateContext';
 import { auth } from '../../firebaseConfig';
@@ -19,9 +20,6 @@ export const KINGDOMS = [
 
 type Mode = 'choice' | 'joining' | 'lobby';
 
-const uid  = () => auth.currentUser?.uid ?? 'anon';
-const name = () => auth.currentUser?.email?.split('@')[0] ?? 'Wizard';
-
 const JoinGame: React.FC = () => {
   const [mode, setMode]           = useState<Mode>('choice');
   const [codeInput, setCodeInput] = useState('');
@@ -30,52 +28,96 @@ const JoinGame: React.FC = () => {
   const [joinError, setJoinError] = useState('');
   const [busy, setBusy]           = useState(false);
   const [copied, setCopied]       = useState(false);
+  const [authReady, setAuthReady] = useState(false);
+  const [user, setUser]           = useState<User | null>(auth.currentUser);
   const unsubRef                  = useRef<(() => void) | null>(null);
 
   const { initializeGame, attachToRoom } = useGameState();
   const navigate = useNavigate();
 
+  const uid = user?.uid ?? null;
+  const name = user?.email?.split('@')[0] ?? 'Wizard';
+
+  useEffect(() => {
+    return onAuthStateChanged(auth, nextUser => {
+      setUser(nextUser);
+      setAuthReady(true);
+      if (!nextUser) {
+        setJoinError('Please sign in before creating or joining a game.');
+        setMode('choice');
+        setRoomCode('');
+        setRoom(null);
+        unsubRef.current?.();
+        unsubRef.current = null;
+        navigate('/');
+      }
+    });
+  }, [navigate]);
+
   // Subscribe to room changes whenever roomCode is set
   useEffect(() => {
-    if (!roomCode) return;
+    if (!roomCode || !uid) return;
     unsubRef.current = subscribeToRoom(roomCode, updatedRoom => {
       setRoom(updatedRoom);
       // All players navigate when host starts
       if (updatedRoom.status === 'playing' && updatedRoom.gameState) {
-        attachToRoom(updatedRoom.code, uid());
+        attachToRoom(updatedRoom.code, uid);
         navigate('/game');
       }
     });
     return () => unsubRef.current?.();
-  }, [roomCode]);
+  }, [attachToRoom, navigate, roomCode, uid]);
 
   const handleCreate = async () => {
-    setBusy(true);
-    const code = await createRoom(uid(), name());
-    setRoomCode(code);
-    setMode('lobby');
-    setBusy(false);
+    if (!uid) {
+      setJoinError('Please sign in before creating a game.');
+      return;
+    }
+
+    try {
+      setJoinError('');
+      setBusy(true);
+      const code = await createRoom(uid, name);
+      setRoomCode(code);
+      setMode('lobby');
+    } catch (error: any) {
+      setJoinError(error?.message ?? 'Could not create game.');
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleJoin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setJoinError('');
-    setBusy(true);
-    const result = await joinRoom(codeInput.trim().toUpperCase(), uid(), name());
-    if (result.ok) {
-      setRoomCode(codeInput.trim().toUpperCase());
-      setMode('lobby');
-    } else {
-      setJoinError(result.error ?? 'Could not join game.');
+    if (!uid) {
+      setJoinError('Please sign in before joining a game.');
+      return;
     }
-    setBusy(false);
+
+    setJoinError('');
+    try {
+      setBusy(true);
+      const result = await joinRoom(codeInput.trim().toUpperCase(), uid, name);
+      if (result.ok) {
+        setRoomCode(codeInput.trim().toUpperCase());
+        setMode('lobby');
+      } else {
+        setJoinError(result.error ?? 'Could not join game.');
+      }
+    } finally {
+      setBusy(false);
+    }
   };
 
   const handleKingdomSelect = async (kingdomId: string) => {
     try {
+      if (!uid) {
+        setJoinError('Please sign in before choosing a kingdom.');
+        return;
+      }
       setJoinError('');
       const k = KINGDOMS.find(k => k.id === kingdomId)!;
-      await selectKingdom(roomCode, uid(), k.id, k.name);
+      await selectKingdom(roomCode, uid, k.id, k.name);
     } catch (error: any) {
       setJoinError(error?.message ?? 'Could not claim that kingdom.');
     }
@@ -83,6 +125,10 @@ const JoinGame: React.FC = () => {
 
   const handleStart = async () => {
     try {
+      if (!uid) {
+        setJoinError('Please sign in before starting a game.');
+        return;
+      }
       setJoinError('');
       if (!room) return;
       const initialState = initializeGame(
@@ -91,7 +137,7 @@ const JoinGame: React.FC = () => {
           name: player.kingdomName ?? player.displayName,
         })),
       );
-      await startGame(roomCode, uid(), initialState);
+      await startGame(roomCode, uid, initialState);
       // Navigation is handled by the onSnapshot listener above
     } catch (error: any) {
       setJoinError(error?.message ?? 'Could not start the game.');
@@ -104,13 +150,23 @@ const JoinGame: React.FC = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const myKingdom  = room?.players.find(p => p.uid === uid())?.kingdomId ?? null;
-  const isHost     = room?.hostUid === uid();
+  const myKingdom  = uid ? room?.players.find(p => p.uid === uid)?.kingdomId ?? null : null;
+  const isHost     = room?.hostUid === uid;
   const hostReady  = myKingdom !== null && allPicked;
   const allPicked  = room?.players.every(p => p.kingdomId !== null) ?? false;
   const takenIds   = room?.players
-    .filter(p => p.uid !== uid() && p.kingdomId)
+    .filter(p => p.uid !== uid && p.kingdomId)
     .map(p => p.kingdomId!) ?? [];
+
+  if (!authReady) {
+    return (
+      <div className="join-game">
+        <div className="setup-panel choice-panel">
+          <p className="setup-subtitle">Checking your sign-in status…</p>
+        </div>
+      </div>
+    );
+  }
 
   // ── Choice screen ─────────────────────────────────────────
   if (mode === 'choice') {
@@ -126,7 +182,7 @@ const JoinGame: React.FC = () => {
           </div>
 
           <div className="choice-buttons">
-            <button className="choice-btn primary" onClick={handleCreate} disabled={busy}>
+            <button className="choice-btn primary" onClick={handleCreate} disabled={busy || !uid}>
               <span className="choice-icon">⚔️</span>
               <span className="choice-label">Create a Game</span>
               <span className="choice-hint">Get a code to share with friends</span>
@@ -146,7 +202,7 @@ const JoinGame: React.FC = () => {
                   maxLength={6}
                   required
                 />
-                <button className="choice-btn secondary" type="submit" disabled={busy || codeInput.length < 4}>
+                <button className="choice-btn secondary" type="submit" disabled={busy || !uid || codeInput.length < 4}>
                   Join →
                 </button>
               </div>
