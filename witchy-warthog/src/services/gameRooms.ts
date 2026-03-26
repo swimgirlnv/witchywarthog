@@ -21,7 +21,7 @@ export interface GameRoom {
   updatedAt?: number;
   startedAt?: number;
   players: RoomPlayer[];
-  gameState?: any;
+  gameState: any | null;
 }
 
 const roomNamespace = import.meta.env.VITE_GAME_NAMESPACE || 'default';
@@ -49,6 +49,7 @@ export const createRoom = async (
         createdAt: Date.now(),
         updatedAt: Date.now(),
         players: [{ uid: hostUid, displayName, kingdomId: null, kingdomName: null }],
+        gameState: null,
       };
       transaction.set(ref, room);
       return true;
