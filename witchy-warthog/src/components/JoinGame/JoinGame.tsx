@@ -152,8 +152,8 @@ const JoinGame: React.FC = () => {
 
   const myKingdom  = uid ? room?.players.find(p => p.uid === uid)?.kingdomId ?? null : null;
   const isHost     = room?.hostUid === uid;
-  const hostReady  = myKingdom !== null && allPicked;
   const allPicked  = room?.players.every(p => p.kingdomId !== null) ?? false;
+  const hostReady  = myKingdom !== null && allPicked;
   const takenIds   = room?.players
     .filter(p => p.uid !== uid && p.kingdomId)
     .map(p => p.kingdomId!) ?? [];

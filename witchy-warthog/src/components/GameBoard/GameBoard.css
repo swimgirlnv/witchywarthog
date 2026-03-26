@@ -1035,7 +1035,7 @@
   padding: 5px 7px;
   border-radius: 12px;
   border: 1px solid rgba(64, 45, 28, 0.15);
-  background: rgba(255, 250, 240, 0.78);
+  background: rgb(59, 50, 87);
 }
 
 .reagent-group {
@@ -1284,6 +1284,7 @@
   .player-header-resources {
     gap: 8px;
   }
+
 
   .player-resource-group {
     flex-wrap: wrap;
