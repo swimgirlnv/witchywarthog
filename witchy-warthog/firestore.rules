@@ -19,6 +19,14 @@ service cloud.firestore {
       );
     }
 
+    function canReadRoom() {
+      return signedIn() && (
+        resource == null ||
+        resource.data.status == 'lobby' ||
+        isParticipant(resource.data)
+      );
+    }
+
     function isLobbyUpdate() {
       return resource.data.status == 'lobby' &&
         request.resource.data.status == 'lobby' &&
@@ -51,7 +59,7 @@ service cloud.firestore {
     }
 
     match /{gameCollection}/{roomCode} {
-      allow read: if isGameCollection(gameCollection) && isParticipant(resource.data);
+      allow read: if isGameCollection(gameCollection) && canReadRoom();
 
       allow create: if isGameCollection(gameCollection) &&
         signedIn() &&
